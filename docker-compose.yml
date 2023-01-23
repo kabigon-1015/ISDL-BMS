@@ -1,0 +1,67 @@
+version: "3"
+services:
+
+    # フロントエンド
+    frontend:
+        container_name: frontend
+        build: ./frontend
+        volumes:
+            - type: bind
+              source: ./frontend/app
+              target: /app
+        ports:
+            - "8080:8080"
+        environment:
+            - NODE_ENV=development
+        links:
+            - backend
+        stdin_open: true
+        tty: true
+
+    # バックエンド
+    backend:
+        container_name: backend
+        build: ./backend
+        volumes:
+            - type: bind
+              source: ./backend/app
+              target: /app
+        ports:
+            - "5000:5000"
+        # command: flask run --host 0.0.0.0 --port 5000
+        environment:
+            - FLASK_DEBUG=1
+            - FLASK_ENV=development
+        tty: true
+        # privileged: true
+        links:
+            - database
+        
+    # データベース
+    database:
+        image: mysql:5.7
+        container_name: database
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: books_db
+            MYSQL_USER: light
+            MYSQL_PASSWORD: light
+            TZ: 'Asia/Tokyo'
+        volumes:
+            - ./database/data:/var/lib/mysql
+            - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./database/sqls:/docker-entrypoint-initdb.d
+        ports:
+            - 3306:3306
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+
+    phpmyadmin:
+        container_name: test_phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOSTS=database
+            - PMA_USER=light
+            - PMA_PASSWORD=light
+        ports:
+            - 8000:80
