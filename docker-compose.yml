@@ -2,66 +2,67 @@ version: "3"
 services:
 
     # フロントエンド
-    frontend:
-        container_name: frontend
-        build: ./frontend
-        volumes:
-            - type: bind
-              source: ./frontend/app
-              target: /app
-        ports:
-            - "8080:8080"
-        environment:
-            - NODE_ENV=development
-        links:
-            - backend
-        stdin_open: true
-        tty: true
+    # frontend:
+    #     container_name: frontend
+    #     build: ./frontend
+    #     volumes:
+    #         - type: bind
+    #           source: ./frontend/app
+    #           target: /app
+    #     ports:
+    #         - "8080:8080"
+    #     environment:
+    #         - NODE_ENV=development
+    #     links:
+    #         - backend
+    #     stdin_open: true
+    #     tty: true
 
     # バックエンド
     backend:
-        container_name: backend
-        build: ./backend
+        container_name: backend_go
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+            target: dev
+        tty: true
+        stdin_open: true
         volumes:
             - type: bind
               source: ./backend/app
               target: /app
         ports:
-            - "5000:5000"
-        # command: flask run --host 0.0.0.0 --port 5000
-        environment:
-            - FLASK_DEBUG=1
-            - FLASK_ENV=development
-        tty: true
-        # privileged: true
-        links:
+            - 8080:8080
+        depends_on:
             - database
         
     # データベース
     database:
-        image: mysql:5.7
-        container_name: database
+        image: mysql:8.0
+        container_name: isdl_bms
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: books_db
+            MYSQL_DATABASE: bms_db
             MYSQL_USER: light
             MYSQL_PASSWORD: light
             TZ: 'Asia/Tokyo'
+        command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+        tty: true
+        stdin_open: true
         volumes:
             - ./database/data:/var/lib/mysql
             - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
             - ./database/sqls:/docker-entrypoint-initdb.d
         ports:
             - 3306:3306
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 
-    phpmyadmin:
-        container_name: test_phpmyadmin
-        image: phpmyadmin/phpmyadmin
-        environment:
-            - PMA_ARBITRARY=1
-            - PMA_HOSTS=database
-            - PMA_USER=light
-            - PMA_PASSWORD=light
-        ports:
-            - 8000:80
+    # phpmyadmin:
+    #     container_name: test_phpmyadmin
+    #     image: phpmyadmin/phpmyadmin
+    #     environment:
+    #         - PMA_ARBITRARY=1
+    #         - PMA_HOSTS=database
+    #         - PMA_USER=light
+    #         - PMA_PASSWORD=light
+    #     ports:
+    #         - 8000:80
