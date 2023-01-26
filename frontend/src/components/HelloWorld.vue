@@ -32,9 +32,14 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  head: {
+    title() {
+      return {
+        inner: 'App',
+        separator: '|',
+        complement: 'page',
+      }
+    }
   }
 }
 </script>

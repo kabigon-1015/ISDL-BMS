@@ -10,9 +10,14 @@
 import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
+  head: {
+    title() {
+      return {
+        inner: 'HomeView',
+        separator: '|',
+        complement: HelloWorld,
+      }
+    }
   }
 }
 </script>

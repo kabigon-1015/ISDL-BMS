@@ -28,3 +28,17 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 </style>
+
+<script>
+export default {
+  head: {
+    title() {
+      return {
+        inner: 'App',
+        separator: '|',
+        complement: 'page',
+      }
+    }
+  }
+}
+</script>
