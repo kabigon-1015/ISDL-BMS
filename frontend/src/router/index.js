@@ -6,9 +6,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    meta: 
-      { name: 'description', content: 'My description', id: 'desc' }
-    
   },
   {
     path: '/about',

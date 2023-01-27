@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import VueHead from 'vue-head'
 
-Vue.use(VueHead)
-createApp(App).use(router).mount('#app')
-
+const app = createApp(App)
+app.use(VueHead)
+app.use(router)
+app.mount('#app')

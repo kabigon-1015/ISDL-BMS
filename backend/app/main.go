@@ -19,6 +19,7 @@ func main() {
 	router.LoadHTMLGlob("../../frontend/dist/*.html")
 	router.Static("/js", "../../frontend/dist/js")
 	router.Static("/css", "../../frontend/dist/css")
+	router.Static("/img", "../../frontend/dist/img")
 
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))

@@ -35,7 +35,7 @@ export default {
   head: {
     title() {
       return {
-        inner: 'App',
+        inner: 'HelloWorld',
         separator: '|',
         complement: 'page',
       }
