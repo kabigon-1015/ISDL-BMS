@@ -3,17 +3,18 @@ package repository
 import (
 	"database/sql"
 	"log"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/hoka-isdl/ISDL-BMS/backend/app/structure"
+	// "github.com/hoka-isdl/ISDL-BMS/backend/app/structure"
 )
 
 var db *sql.DB
 
 func Opendb() {
 
-	db_name, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/taskapp?")
+	db_name, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/bms_db?")
 
 	if err != nil {
 		panic(err.Error())
@@ -21,149 +22,30 @@ func Opendb() {
 
 	db = db_name
 }
-
-func VerifybyName(name string, password string) bool {
-
-	var user structure.User
-
+func CreateTask() {
+	fmt.Println(1)
 	Opendb()
 	defer db.Close()
 
-	_ = db.QueryRow("SELECT name FROM User WHERE name = ? AND password = ?", name, password).Scan(&user.Name)
-
-	if user.Name == "" {
-		return false
-	}
-
-	return true
-}
-
-func Verify(name string, password string) bool {
-	var user structure.User
-
-	Opendb()
-	defer db.Close()
-
-	_ = db.QueryRow("SELECT name FROM User WHERE name = ? AND password = ?", name, password).Scan(&user.Name)
-	if user.Name == "" {
-		return false
-	}
-	return true
-}
-
-func ChangePass(name string, newpass string) {
-
-	Opendb()
-	defer db.Close()
-
-	_ = db.QueryRow("UPDATE User SET password = ? WHERE name = ?", newpass, name)
-}
-
-func GetUserList() []string {
-
-	var user_list []string
-	var user structure.User
-
-	Opendb()
-	defer db.Close()
-
-	rows, err := db.Query("SELECT name FROM User")
+	insert, err := db.Prepare("INSERT INTO Books(id,title,title_kana,ISBN,author,author_kana,publisher,item_capthion,image_url) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	for rows.Next() {
-
-		rows.Scan(&user.Name)
-
-		user_list = append(user_list, user.Name)
-	}
-
-	return user_list
+	// insert.Exec(2,"isbn","岡")
+	insert.Exec(2,"実践力を身につけるPythonの教科書","ジッセンリョクヲミニツケルパイソンノキョウカショ",9784839960247,"クジラ飛行机","クジラヒコウヅクエ","マイナビ出版","基本文法から始めてアプリ開発までしっかり解説","https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
 }
 
-func CreateTask(task_name string, description string, pic string, deadline string) {
+func Researchbook(isbn string) string {
 
-	Opendb()
-	defer db.Close()
+	// Opendb()
+	// defer db.Close()
 
-	insert, err := db.Prepare("INSERT INTO Task(task_name, description, pic, deadline, status) VALUES(?, ?, ?, ?, ?)")
+	// _ = db.QueryRow("SELECT name FROM User WHERE name = ? AND password = ?", name, password).Scan(&user.Name)
 
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	// if user.Name == "" {
+	// 	return false
+	// }
 
-	insert.Exec(task_name, description, pic, deadline, "todo")
-}
-
-func GetTasks(user_name string) ([][]string, [][]string, [][]string) {
-
-	var tasks structure.Task
-	var todo_task_list [][]string
-	var doing_task_list [][]string
-	var done_task_list [][]string
-
-	Opendb()
-	defer db.Close()
-
-	//todo
-	rows_todo, err := db.Query("SELECT task_name, description, deadline FROM Task WHERE pic = ? AND status = ?", user_name, "todo")
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	for rows_todo.Next() {
-		rows_todo.Scan(&tasks.Task_name, &tasks.Task_description, &tasks.Task_deadline)
-
-		task_data := []string{tasks.Task_name, tasks.Task_description, tasks.Task_deadline}
-		todo_task_list = append(todo_task_list, task_data)
-	}
-
-	//doing
-	rows_doing, err := db.Query("SELECT task_name, description, deadline FROM Task WHERE pic = ? AND status = ?", user_name, "doing")
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	for rows_doing.Next() {
-		rows_doing.Scan(&tasks.Task_name, &tasks.Task_description, &tasks.Task_deadline)
-
-		task_data := []string{tasks.Task_name, tasks.Task_description, tasks.Task_deadline}
-		doing_task_list = append(doing_task_list, task_data)
-	}
-
-	//done
-	rows_done, err := db.Query("SELECT task_name, description, deadline FROM Task WHERE pic = ? AND status = ?", user_name, "done")
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	for rows_done.Next() {
-		rows_done.Scan(&tasks.Task_name, &tasks.Task_description, &tasks.Task_deadline)
-
-		task_data := []string{tasks.Task_name, tasks.Task_description, tasks.Task_deadline}
-		done_task_list = append(done_task_list, task_data)
-	}
-
-	return todo_task_list, doing_task_list, done_task_list
-}
-
-func UpdateTaskStatus(user_name string, taskName string, taskDescription string, afterStatus string) {
-
-	Opendb()
-	defer db.Close()
-
-	_ = db.QueryRow("UPDATE Task SET status = ? WHERE pic = ? AND task_name = ? AND description = ?", afterStatus, user_name, taskName, taskDescription)
-}
-
-func DeleteTask(user_name string, taskName string, taskDescription string) {
-
-	Opendb()
-	defer db.Close()
-
-	_ = db.QueryRow("DELETE FROM Task WHERE pic = ? AND task_name = ? AND description = ?", user_name, taskName, taskDescription)
+	return isbn
 }

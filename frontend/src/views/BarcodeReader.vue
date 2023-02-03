@@ -12,7 +12,9 @@
               <label>ISBN</label>
               <span class="focus_line"><i></i></span>
             </div>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">検索</button>
+            <button v-on:click="research" class="btn btn--yellow btn--cubic">
+              借りる
+            </button>
           </div>
         </section>
       </section>
@@ -23,28 +25,30 @@
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from "axios";
+const URL = "localhost/";
+
 export default {
-data:function(){
-    return{
-      isbn:"",
+  data: function () {
+    return {
+      isbn: "",
     };
   },
-// model:{
-//   research:function(){
-//     var params = new FormData()
-// 			params.append("isbn", this.isbn)
-//       axios.post(`${URL}book_list`)
-// 		.then(response => {
-			
-// 		})
-// 		.catch(error => {
-// 			alert('データを送信できませんでした．')
-
-// 		})
-//   }
-// }
-}
+  methods: {
+    research: function () {
+      var params = new FormData();
+      params.append("isbn", this.isbn);
+      axios
+        .post("/research", params)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした．");
+        });
+    },
+  },
+};
 </script>
 
 <style scoped>
