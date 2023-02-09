@@ -42,6 +42,16 @@ const routes = [
     path: '/resetpassword',
     name: 'ResetPassword',
     component: ResetPassword,
+  },
+  {
+    path: '/booklist',
+    name: 'booklist',
+    component: BookList,
+  },
+  {
+    path: '/rental/BookResearch',
+    name: 'BookResearch',
+    component: BookResearch,
   }
 ]
 

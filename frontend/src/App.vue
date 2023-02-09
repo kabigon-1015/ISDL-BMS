@@ -23,11 +23,6 @@
 import HomeHeader from "./components/HomeHeader.vue";
 // import HomeFooter from "./components/HomeFooter.vue";
 export default {
-  data: function () {
-    return {
-      name: "aaa",
-    };
-  },
   components: {
     HomeHeader
 	// HomeFooter

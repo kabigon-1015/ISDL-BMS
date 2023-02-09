@@ -5,10 +5,17 @@
         <section class="box">
           <h2 class="title">Login<span>ログイン</span></h2>
           <form v-on:submit.prevent="doLogin">
-        <label>User ID</label>
-        <input type="text" v-model="id" />
-        <label>Password</label>
-        <input type="password" v-model="password"  />
+        <div class="cp_iptxt">
+              <input class="ef" type="text" v-model="isbn_return" @change="bookreturn" placeholder="@mikilab.doshisha.ac.jp" />
+              <label>Email</label>
+              <span class="focus_line"><i></i></span>
+        </div>
+        <div class="cp_iptxt">
+              <input class="ef" type="text" v-model="isbn_return" @change="bookreturn" placeholder="" />
+              <label>PassWord</label>
+              <span class="focus_line"><i></i></span>
+        </div>
+
         <button v-on:click="login" class="btn btn--yellow btn--cubic">
               Login
         </button>
@@ -41,7 +48,8 @@ export default {
       myresponse:''
     };
   },
- 
+
+  
   methods: {
     login: function(){
       this.$router.push({ path: '/' });
@@ -75,6 +83,99 @@ getresponse() {
 </script>
 
 <style scoped>
+.cp_iptxt {
+  display: inline-block;
+  position: relative;
+  width: 30%;
+  margin: 40px 3%;
+  background-color: #b2adad;
+}
+.cp_iptxt input[type="text"] {
+  font: 15px/24px sans-serif;
+  color: #000;
+  box-sizing: border-box;
+  width: 100%;
+  letter-spacing: 1px;
+  padding-left: 4em;
+}
+.cp_iptxt input[type="text"]:focus {
+  outline: none;
+}
+.ef {
+  padding: 7px 14px;
+  transition: 0.4s;
+  border: 1px solid #1b2538;
+  background: transparent;
+}
+.ef ~ .focus_line:before,
+.ef ~ .focus_line:after {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  content: "";
+  transition: 0.4s;
+  background-color: #da3c41;
+}
+.ef ~ .focus_line:after {
+  top: auto;
+  bottom: 0;
+}
+.ef ~ .focus_line i:before,
+.ef ~ .focus_line i:after {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2px;
+  height: 0;
+  content: "";
+  transition: 0.6s;
+  background-color: #da3c41;
+}
+.ef ~ .focus_line i:after {
+  right: 0;
+  left: auto;
+}
+.ef:focus ~ .focus_line:before,
+.ef:focus ~ .focus_line:after,
+.cp_iptxt.ef ~ .focus_line:before,
+.cp_iptxt.ef ~ .focus_line:after {
+  left: 0;
+  width: 100%;
+  transition: 0.4s;
+}
+.ef:focus ~ .focus_line i:before,
+.ef:focus ~ .focus_line i:after,
+.cp_iptxt.ef ~ .focus_line i:before,
+.cp_iptxt.ef ~ .focus_line i:after {
+  top: -1px;
+  height: 100%;
+  transition: 0.6s;
+}
+.ef ~ label {
+  z-index: -1;
+  opacity: 0;
+  position: absolute;
+  font-size: 20px;
+  top: 4px;
+  left: 14px;
+  width: 50%;
+  transition: 0.3s;
+  letter-spacing: 0.5px;
+  color: #b2adad;
+}
+.ef:focus ~ label,
+.cp_iptxt.ef ~ label {
+  z-index: 0;
+  opacity: 1;
+  font-size: 25px;
+  top: -40px;
+  left: 0;
+  transition: 0.3s;
+  color: #fc040c;
+}
+
 .btn,
 a.btn,
 button.btn {
