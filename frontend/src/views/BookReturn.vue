@@ -28,6 +28,22 @@
 						<td>{{ book.publisher }}</td>
 					</tr>
 				</tbody>
+				<!-- <thead>
+					<tr>
+						<th>タイトル</th>
+						<th>著者</th>
+						<th>出版社</th>
+						<th>貸出状況</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="tableData in filteredbooks" :key="tableData.name">
+						<td v-text="tableData.title"></td>
+						<td v-text="tableData.author"></td>
+						<td v-text="tableData.publisher"></td>
+						<td v-text="tableData.state"></td>
+					</tr>
+				</tbody> -->
 			</table>
           </div>
         </section>
@@ -45,11 +61,8 @@ export default {
 		data() {
 			return {
 			checked:false,
-			isbn_rental:"",
 			isbn_return:"",
-			rentalbooks:[],
 			returnbooks:[],
-			rentalisbn:[],
 			returnisbn:[],
 			sendisbn:[],
 			bookinfo:[{
@@ -116,7 +129,7 @@ export default {
 		},
 		sendreturn:function(){
 			var params = new FormData()
-			params.append('user_id', this.$store.state.userID)
+			// params.append('user_id', this.$store.state.userID)
 			params.append('isbn', this.sendisbn)
 			this.sendisbn = []
 			console.log(params['isbn'])
