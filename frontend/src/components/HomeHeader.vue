@@ -10,7 +10,7 @@
 	<li class="menuimg menu1 current"><router-link to="/"><span>Home</span></router-link></li>
 	<li class="menuimg menu2"><router-link :to="{name:'rental',params:{show:1}}"><span>Rental</span></router-link></li>
 	<li class="menuimg menu3"><router-link to="/return"><span>return</span></router-link></li>
-	<li class="menuimg menu4"><a href="link.html"><span>Links</span></a></li>
+	<li class="menuimg menu4"><router-link to="/userlogin"><span>Login</span></router-link></li>
 	<li class="menuimg menu5"><a href="contact.html"><span>Contact</span></a></li>
 	</ul>
 	</nav>
