@@ -1,5 +1,6 @@
 <template>
   <div id="container">
+    {{ this.name }}
     <HomeHeader />
 	<router-view />
 	<!-- <HomeFooter /> -->
