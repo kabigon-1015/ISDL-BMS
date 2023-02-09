@@ -34,7 +34,7 @@
             </button>
           </div>
           <table>
-            <thead>
+            <thead class="table">
               <tr>
                 <th class="txt book">書籍名</th>
                 <th scope="col" class="txt book1">著者</th>
@@ -43,53 +43,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th class="txt">はじめてのPython</th>
+              <tr v-for="book in books" :key="book.title">
+                <th class="txt">{{book.title}}</th>
                 <td data-label="著者" class="txt">
-                  岡颯人
+                 {{book.author}}
                 </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
-              </tr>
-              <tr>
-                <th class="txt">はじめてのPython</th>
-                <td data-label="著者" class="txt">
-                  岡颯人
-                </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
-              </tr>
-              <tr>
-                <th class="txt">はじめてのPython</th>
-                <td data-label="著者" class="txt">
-                  岡颯人
-                </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
-              </tr>
-              <tr>
-                <th class="txt">はじめてのPython</th>
-                <td data-label="著者" class="txt">
-                  岡颯人
-                </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
-              </tr>
-              <tr>
-                <th class="txt">はじめてのPython</th>
-                <td data-label="著者" class="txt">
-                  岡颯人
-                </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
-              </tr>
-              <tr>
-                <th class="txt">はじめてのPython</th>
-                <td data-label="著者" class="txt">
-                  岡颯人
-                </td>
-                <td data-label="出版社" class="txt">ISDL</td>
-                <td data-label="貸出状況" class="txt">¥3,000</td>
+                <td data-label="出版社" class="txt">{{book.publisher}}</td>
+                <td data-label="貸出状況" class="txt">{{book.status}}</td>
               </tr>
             </tbody>
           </table>
@@ -104,12 +64,25 @@
 
 <script>
 import axios from "axios";
-const URL = "localhost/";
-
+const books=[
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  }
+];
 export default {
   data: function () {
     return {
       book: "",
+      books:books,
     };
   },
   methods: {
@@ -137,12 +110,12 @@ export default {
 
 table {
   position: absolute;
-  right:10%;
+  right:6%;
   top:35%;
   border-collapse: collapse;
   margin: 0 auto;
   padding: 0;
-  width: 650px;
+  width: 390px;
   table-layout: fixed;
 }
 
@@ -171,10 +144,10 @@ table thead tr{
    text-align: right;
 }
 .book{
-    width:200px;
+    width:150px;
 }
 .book1{
-    width:100px;
+    width:80px;
 }
 
 .cp_iptxt {

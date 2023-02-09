@@ -6,7 +6,6 @@
           <h2 class="title">Rental<span>貸出</span></h2>
           <div>
             <h2>書籍のISBNをバーコードリーダーで読み取って下さい</h2>
-
             <div class="cp_iptxt">
               <input class="ef" type="text" v-model="isbn" placeholder="" />
               <label>ISBN</label>
@@ -15,6 +14,17 @@
             <button v-on:click="research" class="btn btn--yellow btn--cubic">
               借りる
             </button>
+          </div>
+          <div class="des1">
+          <img :src="book.image_url" class="image">
+          </div>
+          <div class="des2">
+          <p>
+            書籍名：{{book.title}}<br>
+            著者：{{book.author}}<br>
+            出版社：{{book.publisher}}<br>
+            内容：{{book.content}}
+          </p>
           </div>
         </section>
       </section>
@@ -26,12 +36,21 @@
 
 <script>
 import axios from "axios";
-const URL = "localhost/";
+const book=
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    image_url:"https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200",
+    content:"pythonの教科書です"
+  };
+
 
 export default {
   data: function () {
     return {
       isbn: "",
+      book:book
     };
   },
   methods: {
@@ -52,6 +71,28 @@ export default {
 </script>
 
 <style scoped>
+.des1{
+  
+  display: inline-block;
+  position: absolute;
+  left:20%;
+  top:60%;
+}
+.des2{
+  
+  display: inline-block;
+  position: absolute;
+  margin-right: 15%;
+  top:60%;
+  left:35%;
+}
+.des2 p{
+  font-size:20px;
+}
+.image{
+  left:5%;
+  bottom:10%;
+}
 .cp_iptxt {
   display: inline-block;
   position: relative;
