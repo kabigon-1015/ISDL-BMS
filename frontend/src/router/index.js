@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import BookRental from '../views/BookRental.vue'
 import BarcodeReader from '../views/BarcodeReader.vue'
 import BookReturn from '../views/BookReturn.vue'
+import BookList from '../views/BookList.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/return',
     name: 'return',
     component: BookReturn,
+  },
+  {
+    path: '/booklist',
+    name: 'booklist',
+    component: BookList,
   }
 ]
 
