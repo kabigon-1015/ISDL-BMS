@@ -3,31 +3,9 @@
     <div id="main">
       <section id="pagetop">
         <section class="box">
-          <h2 class="title">Return<span>返却</span></h2>
+            <h2 class="title">Book List<span>書籍一覧</span></h2>
           <div>
-            <h2>書籍のISBNをバーコードリーダーで読み取って下さい</h2>
-
-            <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="isbn_return" @change="bookreturn" placeholder="スキャンしてください" />
-              <label>ISBN</label>
-              <span class="focus_line"><i></i></span>
-            </div>
-            <button variant="secondary" class="btn btn--yellow btn--cubic" v-on:click="sendreturn">送信</button>
 			<table class="returntable">
-				<thead>
-					<tr>
-						<th>タイトル</th>
-						<th>著者</th>
-						<th>出版社</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(book, index) in returnbooks" :key="index">
-						<td>{{ book.title }}</td>
-						<td>{{ book.author }}</td>
-						<td>{{ book.publisher }}</td>
-					</tr>
-				</tbody>
 				<thead>
 					<tr>
 						<th>タイトル</th>
@@ -57,7 +35,7 @@
 import axios from 'axios'
 const URL = '/'
 export default {
-	name: 'BookReturn',
+	name: 'BookList',
 		data() {
 			return {
 			checked:false,
@@ -79,96 +57,30 @@ export default {
 			keyword:'',
 		}
 	},
-	// created: function() {
-	// 	axios.post(`${URL}book_list`)
-	// 	.then(response => {
-	// 		// alert(response.status)
-	// 		// console.log(response.data)
-	// 		for(var i in response.data){
-	// 			console.log(response.data[i].rental_username)
-	// 			this.getData = {
-	// 				title:response.data[i].title,
-	// 				author:response.data[i].author,
-	// 				publisher:response.data[i].publisher,
-	// 				state: String(response.data[i].rentaluser_name)
-	// 			}
-	// 			console.log(response.data)
-	// 			if(this.getData.state == "null") {
-	// 				this.getData.state = '貸出可能'
-	// 			}
-	// 			this.tableData.push(this.getData)
-	// 		}	
-	// 	})
-	// 	.catch(error => {
-	// 		alert('データを送信できませんでした．')
-	// 		// alert(error)
-	// 	})
-	// },
-	methods: {
-		bookreturn:function () {
-			var params = new FormData()
-			params.append("isbn", this.isbn_return)
-			this.isbn = this.isbn_return
-			axios.post(`${URL}bookinfo`, params)
-			.then(response => {
-				this.getData = {
-					title: response.data.title,
-					author: response.data.author,
-					publisher: response.data.publisher,
-					isbn: this.isbn
-				}
-				// 表に追加
-				this.returnbooks.push({
-					title: String(this.getData.title),
-					author:String(this.getData.author),
-					publisher:String(this.getData.publisher),
-				});
-				this.sendisbn.push(this.getData.isbn)
-			})
-			this.isbn_return='';
-		},
-		sendreturn:function(){
-			var params = new FormData()
-			// params.append('user_id', this.$store.state.userID)
-			params.append('isbn', this.sendisbn)
-			this.sendisbn = []
-			console.log(params['isbn'])
-			axios.post(`${URL}return_register`, params)
-			.then(response => {
-				alert(response.data['message'])
-				axios.post(`${URL}book_list`)
-				.then(response => {
-					// alert(response.status)
-					// console.log(response.data)
-					this.tableData=[]
-					for(var i in response.data.title){
-						console.log(i)
-						this.getData = {
-							title:response.data.title[i],
-							author:response.data.author[i],
-							publisher:response.data.publisher[i],
-							state: String(response.data.rentaluser_name[i])
-						}
-						console.log(response.data)
-						if(this.getData.state == "null") {
-							this.getData.state = '貸出可能'
-						}
-						this.tableData.push(this.getData)
-					}	
-				})
-				.catch(error => {
-					alert('データを送信できませんでした．')
-					console.log(error)
-					// alert(error)
-				})
-				console.log(response.data)
-			})
-			.catch(error => {
-				alert('データを送信できませんでした．')
-				alert(error)
-			})
-			this.returnbooks.splice(0)
-		},
+	created: function() {
+		axios.post(`${URL}book_list`)
+		.then(response => {
+			// alert(response.status)
+			// console.log(response.data)
+			for(var i in response.data.title){
+                console.log(i)
+                this.getData = {
+                    title:response.data.title[i],
+                    author:response.data.author[i],
+                    publisher:response.data.publisher[i],
+                    state: String(response.data.rentaluser_name[i])
+                }
+                console.log(response.data)
+                if(this.getData.state == "null") {
+                    this.getData.state = '貸出可能'
+                }
+                this.tableData.push(this.getData)
+            }
+		})
+		.catch(error => {
+			alert('データを送信できませんでした．')
+			// alert(error)
+		})
 	},
 	computed: {	
 		filteredbooks: function() {
@@ -366,7 +278,7 @@ thead th {
 	padding: 8px 0;
 	/* color */
 	color: white;
-	background-color:#00d0ff;
+	background-color:#1b2538;
 	border-top: 1px solid #a2a7af;
 	border-left: 1px solid #a2a7af;
 	border-right: 1px solid #a2a7af;
