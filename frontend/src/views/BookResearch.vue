@@ -127,6 +127,16 @@ export default {
     },
     catchtag(tagdata){
       this.tag.push(tagdata)
+      var params = new FormData();
+      params.append("tag", this.tag);
+      const response = axios
+        .post("/research", params)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした．");
+        });
     }
   },
 };

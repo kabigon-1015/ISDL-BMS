@@ -6,12 +6,12 @@
           <h2 class="title">Login<span>ログイン</span></h2>
           <form v-on:submit.prevent="doLogin">
         <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="isbn_return" @change="bookreturn" placeholder="@mikilab.doshisha.ac.jp" />
+              <input class="ef" type="text" v-model="id" placeholder="@mikilab.doshisha.ac.jp" />
               <label>Email</label>
               <span class="focus_line"><i></i></span>
         </div>
         <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="isbn_return" @change="bookreturn" placeholder="" />
+              <input class="ef" type="text" v-model="password" placeholder="" />
               <label>PassWord</label>
               <span class="focus_line"><i></i></span>
         </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-//import axios from 'axios';
+import axios from 'axios';
 
 //const uri = "http://localhost:8080/logincheck";
 
@@ -52,6 +52,18 @@ export default {
   
   methods: {
     login: function(){
+      var params = new FormData();
+      params.append("id", this.id);
+      params.append("password", this.password);
+      const response = axios
+        .post("/login", params)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした．");
+        });
+      //alert(response.data.name);
       this.$router.push({ path: '/' });
     },
     signup: function(){
