@@ -148,4 +148,20 @@ func Router(router *gin.Engine) {
 			"rentaluser_name": rentaluser_namelist,
 		})
 	})
+
+	router.POST("/book_detail", func(c *gin.Context) {
+
+		booktitle := c.PostForm("booktitle")
+		fmt.Print(booktitle)
+
+		bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetBookDetail(booktitle)
+
+		c.JSON(200, gin.H{
+			"title":        booktitle,
+			"author":       bookauthor,
+			"publisher":    bookpublisher,
+			"item_caption": bookitem_caption,
+			"imageyrl":     bookimageurl,
+		})
+	})
 }

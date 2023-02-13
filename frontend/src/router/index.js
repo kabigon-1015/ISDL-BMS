@@ -8,6 +8,7 @@ import SignUp from '../views/SignUp.vue'
 import ResetPassword from '../views/ResetPassword.vue'
 import BookList from '../views/BookList.vue'
 import BookResearch from '../views/BookResearch.vue'
+import BookDetail from '../views/BookDetail.vue'
 
 const routes = [
   {
@@ -54,7 +55,12 @@ const routes = [
     path: '/rental/BookResearch',
     name: 'BookResearch',
     component: BookResearch,
-  }
+  },
+  {
+    path: '/booklist/detail',
+    name: 'detail',
+    component: BookDetail,
+  },
 ]
 
 const router = createRouter({

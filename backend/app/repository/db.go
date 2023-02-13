@@ -242,3 +242,21 @@ func GetRenterInfo(book_id string) string {
 
 	return name
 }
+
+func GetBookDetail(title string) (string, string, string, string) {
+	var book structure.Books
+
+	Opendb()
+	defer db.Close()
+
+	rows_detail, err := db.Query("SELECT author, publisher, item_caption, image_url from Books where title=?", title)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	for rows_detail.Next() {
+		rows_detail.Scan(&book.Book_author, &book.Book_publisher, &book.Book_caption, &book.Book_imageurl)
+	}
+
+	return book.Book_author, book.Book_publisher, book.Book_caption, book.Book_imageurl
+}
