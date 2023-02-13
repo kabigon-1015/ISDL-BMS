@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Books(
     author VARCHAR(40),
     author_kana VARCHAR(80),
     publisher VARCHAR(60),
-    item_caption VARCHAR(40),
+    item_caption VARCHAR(500),
     sales_date DATE,
     image_url VARCHAR(500)
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

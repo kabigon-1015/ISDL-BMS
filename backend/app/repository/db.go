@@ -36,6 +36,20 @@ func CreateTask() {
 	insert.Exec("1116190059", "酒部健太郎", "sakabe", "sakabe.kentaro@mikilab.doshisha.ac.jp")
 }
 
+func CreateTask2() {
+	fmt.Println(1)
+	Opendb()
+	defer db.Close()
+
+	insert, err := db.Prepare("INSERT INTO Books(id,title,title_kana,ISBN,author,author_kana,publisher,item_caption,image_url) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// insert.Exec(2,"isbn","岡")
+	insert.Exec(2, "実践力を身につけるPythonの教科書", "ジッセンリョクヲミニツケルパイソンノキョウカショ", 9784839960247, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+}
+
 func Researchbook(isbn string) string {
 
 	// Opendb()
@@ -102,7 +116,7 @@ func FilterBooks(tagid []string) ([][]string) {
 			book_sql += book_sql + "AND tagid LIKE %" + id + "% ";
 		}
 	}
-
+	fmt.Print(sql)
 	Opendb()
 	defer db.Close()
 
