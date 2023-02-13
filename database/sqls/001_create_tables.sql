@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS Students(
     id CHAR(30) NOT NULL PRIMARY KEY,
     name VARCHAR(64) NOT NULL,
+    password VARCHAR(64) NOT NULL UNIQUE,
     email VARCHAR(100)
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -12,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Books(
     author VARCHAR(40),
     author_kana VARCHAR(80),
     publisher VARCHAR(60),
-    item_capthion VARCHAR(40),
+    item_caption VARCHAR(40),
     sales_date DATE,
     image_url VARCHAR(500)
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

@@ -27,13 +27,13 @@ func CreateTask() {
 	Opendb()
 	defer db.Close()
 
-	insert, err := db.Prepare("INSERT INTO Books(id,title,title_kana,ISBN,author,author_kana,publisher,item_caption,image_url) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	insert, err := db.Prepare("INSERT INTO Students(id,name,password,email) VALUES(?, ?, ?, ?)")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	// insert.Exec(2,"isbn","岡")
-	insert.Exec(2, "実践力を身につけるPythonの教科書", "ジッセンリョクヲミニツケルパイソンノキョウカショ", 9784839960247, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+	insert.Exec("1116190059", "酒部健太郎", "sakabe", "sakabe.kentaro@mikilab.doshisha.ac.jp")
 }
 
 func Researchbook(isbn string) string {
@@ -67,6 +67,25 @@ func GetBookinfo(isbn string) (string, string, string) {
 	}
 
 	return book.Book_title, book.Book_author, book.Book_publisher
+}
+
+func GetUserinfo(id string, password string) (string, string) {
+	var student structure.Students
+
+	Opendb()
+	defer db.Close()
+
+	rows_title, err := db.Query("SELECT name, email FROM Students WHERE id = ? AND password = ?", id, password)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_title.Next() {
+		rows_title.Scan(&student.Name, &student.Email)
+	}
+
+	return student.Name, student.Email
 }
 
 func Returnbook(id string, isbn string) {
