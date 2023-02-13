@@ -6,12 +6,12 @@
           <h2 class="title">Login<span>ログイン</span></h2>
           <form v-on:submit.prevent="doLogin">
         <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="id" @change="bookreturn" placeholder="@mikilab.doshisha.ac.jp" />
+              <input class="ef" type="text" v-model="id" placeholder="@mikilab.doshisha.ac.jp" />
               <label>Email</label>
               <span class="focus_line"><i></i></span>
         </div>
         <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="password" @change="bookreturn" placeholder="" />
+              <input class="ef" type="text" v-model="password" placeholder="" />
               <label>PassWord</label>
               <span class="focus_line"><i></i></span>
         </div>

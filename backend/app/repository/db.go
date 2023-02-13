@@ -69,6 +69,59 @@ func GetBookinfo(isbn string) (string, string, string) {
 	return book.Book_title, book.Book_author, book.Book_publisher
 }
 
+func GetTagid(tagname string) (string) {
+	var tag structure.Tags
+
+	Opendb()
+	defer db.Close()
+
+	rows_title, err := db.Query("SELECT id FROM Tags WHERE tagname = ?", tagname)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_title.Next() {
+		rows_title.Scan(&tag.Id, &tag.TagName)
+	}
+
+	return tag.Id
+}
+
+func FilterBooks(tagid []string) ([][]string) {
+	var book structure.Books
+	var Filter_book_data [][]string
+	var book_sql string
+
+	book_sql = "SELECT title, author, publisher, id from Books WHERE "
+	for index, id := range tagid{
+		if index == 0{
+			book_sql += book_sql + "tagid LIKE %" + id + "% ";
+		
+		}else{
+			book_sql += book_sql + "AND tagid LIKE %" + id + "% ";
+		}
+	}
+
+	Opendb()
+	defer db.Close()
+
+	rows_all, err := db.Query(book_sql)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_all.Next() {
+		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id)
+
+		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher, book.Book_id}
+		Filter_book_data = append(Filter_book_data, book_data)
+	}
+
+	return Filter_book_data
+}
+
 func GetUserinfo(id string, password string) (string, string) {
 	var student structure.Students
 

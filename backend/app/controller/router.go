@@ -76,6 +76,18 @@ func Router(router *gin.Engine) {
 		})
 	})
 
+	router.POST("/filterbook", func(c *gin.Context) {
+		id := c.PostForm("id")
+		password := c.PostForm("password")
+		fmt.Print(id)
+		name, email := repository.GetUserinfo(id, password)
+		fmt.Print(name, email)
+		c.JSON(200, gin.H{
+			"name":     name,
+			"email":    email,
+		})
+	})
+
 	router.POST("/return_register", func(c *gin.Context) {
 		isbns := c.PostForm("isbn")
 		isbn := strings.Split(isbns, ",")
