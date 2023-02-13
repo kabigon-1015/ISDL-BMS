@@ -1,18 +1,25 @@
 CREATE TABLE IF NOT EXISTS Students(
     id CHAR(30) NOT NULL PRIMARY KEY,
     name VARCHAR(64) NOT NULL,
+    password VARCHAR(64) NOT NULL UNIQUE,
     email VARCHAR(100)
+)DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE IF NOT EXISTS Tags(
+    id CHAR(30) NOT NULL PRIMARY KEY,
+    tagname VARCHAR(64) NOT NULL,
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS Books(
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(64) NOT NULL,
     title_kana VARCHAR(128),
+    tagid VARCHAR(64) NOT NULL,
     ISBN BIGINT(15) NOT NULL,
     author VARCHAR(40),
     author_kana VARCHAR(80),
     publisher VARCHAR(60),
-    item_capthion VARCHAR(40),
+    item_caption VARCHAR(500),
     sales_date DATE,
     image_url VARCHAR(500)
 )DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

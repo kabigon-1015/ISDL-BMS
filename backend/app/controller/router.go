@@ -38,7 +38,7 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	// repository.CreateTask()
+	repository.CreateTask()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -61,6 +61,48 @@ func Router(router *gin.Engine) {
 			"title":     title,
 			"author":    author,
 			"publisher": publisher,
+		})
+	})
+
+	router.POST("/login", func(c *gin.Context) {
+		id := c.PostForm("id")
+		password := c.PostForm("password")
+		fmt.Print(id)
+		name, email := repository.GetUserinfo(id, password)
+		fmt.Print(name, email)
+		c.JSON(200, gin.H{
+			"name":     name,
+			"email":    email,
+		})
+	})
+
+	router.POST("/filterbook", func(c *gin.Context) {
+		var titlelist []string
+		var authorlist []string
+		var publisherlist []string
+		var rentaluser_namelist []string
+		tags := c.PostForm("tags")
+		fmt.Print(tags)
+		booklist_temp := repository.GetAllBookData()
+
+		for _, v := range booklist_temp {
+			title := v[0]
+			author := v[1]
+			publisher := v[2]
+			rentaluser_name := repository.GetRenterInfo(v[3])
+
+			fmt.Print(title, author, publisher, rentaluser_name, "\n")
+
+			titlelist = append(titlelist, title)
+			authorlist = append(authorlist, author)
+			publisherlist = append(publisherlist, publisher)
+			rentaluser_namelist = append(rentaluser_namelist, rentaluser_name)
+		}
+		c.JSON(200, gin.H{
+			"title":           titlelist,
+			"author":          authorlist,
+			"publisher":       publisherlist,
+			"rentaluser_name": rentaluser_namelist,
 		})
 	})
 
