@@ -83,7 +83,7 @@ func GetBookinfo(isbn string) (string, string, string) {
 	return book.Book_title, book.Book_author, book.Book_publisher
 }
 
-func GetTagid(tagname string) (string) {
+func GetTagid(tagname string) string {
 	var tag structure.Tags
 
 	Opendb()
@@ -102,21 +102,21 @@ func GetTagid(tagname string) (string) {
 	return tag.Id
 }
 
-func FilterBooks(tagid []string) ([][]string) {
+func FilterBooks(tagid []string) [][]string {
 	var book structure.Books
 	var Filter_book_data [][]string
 	var book_sql string
 
 	book_sql = "SELECT title, author, publisher, id from Books WHERE "
-	for index, id := range tagid{
-		if index == 0{
-			book_sql += book_sql + "tagid LIKE %" + id + "% ";
-		
-		}else{
-			book_sql += book_sql + "AND tagid LIKE %" + id + "% ";
+	for index, id := range tagid {
+		if index == 0 {
+			book_sql += book_sql + "tagid LIKE %" + id + "% "
+
+		} else {
+			book_sql += book_sql + "AND tagid LIKE %" + id + "% "
 		}
 	}
-	fmt.Print(sql)
+	// fmt.Print(sql)
 	Opendb()
 	defer db.Close()
 
