@@ -15,25 +15,15 @@
             <button v-on:click="research" class="btn btn--yellow btn--cubic">
               検索
             </button>
-
-            <h2>書籍に関連するタグを選んでください</h2>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
+            <h2>書籍に関連するタグを選んで下さい</h2>
+            <div class="tagbtn">
+            <button v-for="tag in tags" :key="tag" v-on:click="research" class="btn btn--yellow btn--cubic">
+              {{tag}}
             </button>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
-            </button>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
-            </button>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
-            </button>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
-            </button>
+            </div>
           </div>
-          <table>
+          <div class="tablebook">
+          <!-- <table id="table">
             <thead class="table">
               <tr>
                 <th class="txt book">書籍名</th>
@@ -42,17 +32,20 @@
                 <th scope="col" class="txt book1">貸出状況</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="bookbody">
               <tr v-for="book in books" :key="book.title">
                 <th class="txt">{{book.title}}</th>
                 <td data-label="著者" class="txt">
                  {{book.author}}
                 </td>
                 <td data-label="出版社" class="txt">{{book.publisher}}</td>
-                <td data-label="貸出状況" class="txt">{{book.status}}</td>
+                <td data-label="貸出状況" class="txt1 rental"><button v-on:click="research" class="rentalstatus btn--yellow btn--cubic">
+              借りる
+            </button></td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
+          </div>
         </section>
       </section>
       {{ this.book }}
@@ -66,6 +59,12 @@
 import axios from "axios";
 const books=[
   {
+    title:"python89898989898989898989898989898",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
+  {
     title:"python",
     author:"oka",
     publisher:"hayato",
@@ -76,20 +75,47 @@ const books=[
     author:"oka",
     publisher:"hayato",
     status:"ok"
-  }
+  },
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
+  {
+    title:"python",
+    author:"oka",
+    publisher:"hayato",
+    status:"ok"
+  },
 ];
+const tags=["機械学習","GAN","LSTM","CNN","EEG","DE"]
 export default {
   data: function () {
     return {
       book: "",
       books:books,
+      tags:tags
     };
   },
   methods: {
     research: function () {
+
       var params = new FormData();
       params.append("isbn", this.book);
-      axios
+      const response = axios
         .post("/research", params)
         .then((response) => {
           console.log(response.data);
@@ -107,7 +133,42 @@ export default {
   font-family: "Open Sans", sans-serif;
   line-height: 1.25;
 } */
-
+.tagbtn{
+  width: 500px;
+  height: 200px;
+  flex-wrap:wrap;/* これを指定する */
+  
+}
+.rental{
+   text-align: center;
+}
+.rentalstatus{
+  width: 60px;
+  height: 5px;
+  
+  border: none;
+  font-size: 1rem;
+  font-weight: 200;
+  line-height: 0.7;
+  position: relative;
+  display: inline-block;
+  margin-right: 2%;
+  margin-bottom:2%;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: #212529;
+  border-radius: 0.5rem;
+}
 table {
   position: absolute;
   right:6%;
@@ -115,8 +176,15 @@ table {
   border-collapse: collapse;
   margin: 0 auto;
   padding: 0;
-  width: 390px;
+  width: 500px;
   table-layout: fixed;
+  
+}
+.tablebook{
+  position: relative;
+  width: 60px;
+  height: 60px;
+  background-color: #a62828;
 }
 
 table tr {
@@ -126,8 +194,9 @@ table tr {
 }
 table th,
 table td {
-  padding: 1em 10px 1em 1em;
+  padding: 1px 1px 1px 1px;
   border-right: 1px solid #bbb;
+  word-wrap: break-word;/*改行*/
 }
 table th {
   font-size: .85em;
@@ -135,8 +204,14 @@ table th {
 table thead tr{
   background-color: #eee;
 }
+
 .txt{
    text-align: left;
+   font-size: 1.3em;
+   color: #000;
+}
+.txt1{
+   text-align: center;
    font-size: 1.3em;
    color: #000;
 }
@@ -144,10 +219,12 @@ table thead tr{
    text-align: right;
 }
 .book{
-    width:150px;
+    width:200px;
+    text-align: center;
 }
 .book1{
-    width:80px;
+    width:100px;
+    text-align: center;
 }
 
 .cp_iptxt {
@@ -265,6 +342,8 @@ button.btn {
   line-height: 0.7;
   position: relative;
   display: inline-block;
+  margin-right: 2%;
+  margin-bottom:2%;
   padding: 1rem 2rem;
   cursor: pointer;
   -webkit-user-select: none;
