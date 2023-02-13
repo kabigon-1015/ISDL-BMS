@@ -19,12 +19,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="tableData in filteredbooks" :key="tableData.name">
-						<router-link :to="{name:'detail',query:{title:tableData.title}}"><td v-text="tableData.title"></td></router-link>
-						<td v-text="tableData.author"></td>
-						<td v-text="tableData.publisher"></td>
-						<td v-text="tableData.state"></td>
-					</tr>
+                    <td v-text="getData.title"></td>
+                    <td v-text="getData.author"></td>
+                    <td v-text="getData.publisher"></td>
+                    <td v-text="getData.item_caption"></td>
+                    <td v-text="getData.imageurl"></td>
 				</tbody>
 			</table>
           </div>
@@ -42,6 +41,7 @@ export default {
 	name: 'BookList',
 		data() {
 			return {
+            booktitle: this.$route.query.title,
 			checked:false,
 			isbn_return:"",
 			returnbooks:[],
@@ -61,60 +61,36 @@ export default {
 			keyword:'',
 		}
 	},
-	created: function() {
-		axios.post(`${URL}book_list`)
-		.then(response => {
-			// alert(response.status)
-			// console.log(response.data)
-			for(var i in response.data.title){
-                console.log(i)
-                this.getData = {
-                    title:response.data.title[i],
-                    author:response.data.author[i],
-                    publisher:response.data.publisher[i],
-                    state: String(response.data.rentaluser_name[i])
-                }
-                console.log(response.data)
-                if(this.getData.state == "null") {
-                    this.getData.state = '貸出可能'
-                }
-                this.tableData.push(this.getData)
-            }
-		})
-		.catch(error => {
-			alert('データを送信できませんでした．')
-			// alert(error)
-		})
-	},
-	computed: {	
-		filteredbooks: function() {
-			var tableData = [];
-			var books=[];
-			var book;
-			for(var j in this.tableData){
-				book=this.tableData[j];
-				if(this.checked==true){
-					if(book.state=='貸出可能'){
-						// book.state = '貸出可能'
-						books.push(book);
-						// console.log(book)
-					}
-				}
-				else{
-					books.push(book);
-					// console.log(book)
-				}
-			}
-			
-			for(var i in books) {
-				book = books[i];
-				if(book.title.indexOf(this.keyword) !== -1 ) {
-					tableData.push(book);
-				}
-			}
-			return tableData;
-		},
-	}
+  created: function() {
+    var params = new FormData()
+    params.append("booktitle", this.booktitle)
+    axios.post(`${URL}book_detail`, params)
+    .then(response => {
+        // alert(response.status)
+        // console.log(response.data)
+        this.getData = {
+            title:response.data.title,
+            author:response.data.author,
+            publisher:response.data.publisher,
+            item_caption: response.data.item_caption,
+            imageurl: response.data.imageurl
+        }
+        console.log(response.data)
+        if(this.getData.state == "null") {
+            this.getData.state = '貸出可能'
+        }
+        this.tableData.push(this.getData)
+    })
+    .catch(error => {
+        alert('データを送信できませんでした．')
+        // alert(error)
+    })
+  },
+  mounted(){
+    console.log(this.title)
+    console.log(this.$route.query)
+    console.log("this.$route.params.title", this.$route.query.title)
+  },
 }
 </script>
 
