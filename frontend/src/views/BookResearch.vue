@@ -17,7 +17,7 @@
             </button>
             <h2>書籍に関連するタグを選んで下さい</h2>
             <div class="tagbtn">
-            <button v-for="tag in tags" :key="tag" v-on:click="research" class="btn btn--yellow btn--cubic">
+            <button v-for="(tag,index) in tags" :key="index" v-on:click="catchtag(tag)" class="btn btn--yellow btn--cubic">
               {{tag}}
             </button>
             </div>
@@ -48,7 +48,7 @@
           </div>
         </section>
       </section>
-      {{ this.book }}
+      <!-- {{ this.tag }} -->
     </div>
     <!--/#main-->
   </div>
@@ -107,7 +107,8 @@ export default {
     return {
       book: "",
       books:books,
-      tags:tags
+      tags:tags,
+      tag:[],
     };
   },
   methods: {
@@ -124,6 +125,9 @@ export default {
           alert("データを送信できませんでした．");
         });
     },
+    catchtag(tagdata){
+      this.tag.push(tagdata)
+    }
   },
 };
 </script>
