@@ -38,7 +38,7 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	repository.CreateTask()
+	// repository.CreateTask()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -71,8 +71,8 @@ func Router(router *gin.Engine) {
 		name, email := repository.GetUserinfo(id, password)
 		fmt.Print(name, email)
 		c.JSON(200, gin.H{
-			"name":     name,
-			"email":    email,
+			"name":  name,
+			"email": email,
 		})
 	})
 
@@ -161,7 +161,7 @@ func Router(router *gin.Engine) {
 			"author":       bookauthor,
 			"publisher":    bookpublisher,
 			"item_caption": bookitem_caption,
-			"imageyrl":     bookimageurl,
+			"imageurl":     bookimageurl,
 		})
 	})
 }
