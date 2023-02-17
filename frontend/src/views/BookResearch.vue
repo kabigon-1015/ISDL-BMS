@@ -22,30 +22,24 @@
             </button>
             </div>
           </div>
-          <div class="tablebook">
-          <!-- <table id="table">
-            <thead class="table">
-              <tr>
-                <th class="txt book">書籍名</th>
-                <th scope="col" class="txt book1">著者</th>
-                <th scope="col" class="txt book1">出版社</th>
-                <th scope="col" class="txt book1">貸出状況</th>
-              </tr>
-            </thead>
-            <tbody class="bookbody">
-              <tr v-for="book in books" :key="book.title">
-                <th class="txt">{{book.title}}</th>
-                <td data-label="著者" class="txt">
-                 {{book.author}}
-                </td>
-                <td data-label="出版社" class="txt">{{book.publisher}}</td>
-                <td data-label="貸出状況" class="txt1 rental"><button v-on:click="research" class="rentalstatus btn--yellow btn--cubic">
-              借りる
-            </button></td>
-              </tr>
-            </tbody>
-          </table> -->
-          </div>
+          <table class="returntable">
+				<thead>
+					<tr>
+						<th>タイトル</th>
+						<th>著者</th>
+						<th>出版社</th>
+						<th>貸出状況</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="Data in tableData" :key="Data.name">
+						<td v-text="Data.title"></td>
+            <td v-text="Data.author"></td>
+						<td v-text="Data.publisher"></td>
+						<td v-text="Data.state"></td>
+					</tr>
+				</tbody>
+			</table>
         </section>
       </section>
       <!-- {{ this.tag }} -->
@@ -109,6 +103,8 @@ export default {
       books:books,
       tags:tags,
       tag:[],
+      getData:[],
+			tableData: [],
     };
   },
   methods: {
@@ -126,13 +122,38 @@ export default {
         });
     },
     catchtag(tagdata){
-      this.tag.push(tagdata)
+      var select = 'off'
+      for (var t in this.tag){
+        if (this.tag[t] == tagdata){
+          select = 'on'
+          this.tag.splice(t,1)
+        }
+      }
+      if (select == 'off'){
+        this.tag.push(tagdata)
+      }
       var params = new FormData();
-      params.append("tag", this.tag);
+      params.append('taglength', this.tag.length)
+      this.tag.forEach((text, index) => {
+        params.append('tag[' + index + ']', text);
+      })
       const response = axios
-        .post("/research", params)
+        .post("/filterbook", params)
         .then((response) => {
-          console.log(response.data);
+          for(var i in response.data.title){
+                console.log(i)
+                this.getData = {
+                    title:response.data.title[i],
+                    author:response.data.author[i],
+                    publisher:response.data.publisher[i],
+                    state: String(response.data.rentaluser_name[i])
+                }
+                console.log(response.data)
+                if(this.getData.state == "null") {
+                    this.getData.state = '貸出可能'
+                }
+                this.tableData.push(this.getData)
+            }
         })
         .catch((error) => {
           alert("データを送信できませんでした．");
