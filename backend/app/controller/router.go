@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -38,7 +39,8 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	// repository.CreateTask()
+	repository.CreateTask_tag()
+	repository.CreateTask2()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -81,9 +83,17 @@ func Router(router *gin.Engine) {
 		var authorlist []string
 		var publisherlist []string
 		var rentaluser_namelist []string
-		tags := c.PostForm("tags")
-		fmt.Print(tags)
-		booklist_temp := repository.GetAllBookData()
+		var tagid []string
+
+		_len := c.PostForm("taglength")
+		len, _ := strconv.Atoi(_len)
+		for i := 0; i < len; i++ {
+			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+			tagid = append(tagid, repository.GetTagid(c.PostForm("tag[" + strconv.Itoa(i) + "]")))
+			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+		}
+		fmt.Print(tagid)
+		booklist_temp := repository.FilterBooks_ver2(tagid)
 
 		for _, v := range booklist_temp {
 			title := v[0]

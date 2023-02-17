@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/hoka-isdl/ISDL-BMS/backend/app/structure"
@@ -36,6 +37,22 @@ func CreateTask() {
 	insert.Exec("1116190059", "酒部健太郎", "sakabe", "sakabe.kentaro@mikilab.doshisha.ac.jp")
 }
 
+func CreateTask_tag() {
+	fmt.Println(1)
+	Opendb()
+	defer db.Close()
+
+	insert, err := db.Prepare("INSERT INTO Tags(id,tagname) VALUES(?, ?)")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// insert.Exec(2,"isbn","岡")
+	insert.Exec("1", "機械学習")
+	insert.Exec("2", "GAN")
+	insert.Exec("3", "LSTM")
+}
+
 func CreateTask2() {
 	fmt.Println(1)
 	Opendb()
@@ -47,7 +64,8 @@ func CreateTask2() {
 		log.Fatal(err.Error())
 	}
 	// insert.Exec(2,"isbn","岡")
-	insert.Exec(2, "実践力を身につけるPythonの教科書", "ジッセンリョクヲミニツケルパイソンノキョウカショ", "02" 9784839960247, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+	insert.Exec(2, "実践力を身につけるPythonの教科書", "ジッセンリョクヲミニツケルパイソンノキョウカショ", "#1#", 9784839960247, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+	insert.Exec(4, "実践力を身につけるGANの教科書", "ジッセンリョクヲミニツケルギャンノキョウカショ", "#1##2#", 9784839960257, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
 }
 
 func Researchbook(isbn string) string {
@@ -83,13 +101,17 @@ func GetBookinfo(isbn string) (string, string, string) {
 	return book.Book_title, book.Book_author, book.Book_publisher
 }
 
+func Partitionid(num string) string {
+	return "#" + num + "#"
+}
+
 func GetTagid(tagname string) string {
 	var tag structure.Tags
 
 	Opendb()
 	defer db.Close()
 
-	rows_title, err := db.Query("SELECT id FROM Tags WHERE tagname = ?", tagname)
+	rows_title, err := db.Query("SELECT id, tagname FROM Tags WHERE tagname = ?", tagname)
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -106,35 +128,69 @@ func FilterBooks(tagid []string) [][]string {
 	var book structure.Books
 	var Filter_book_data [][]string
 	var book_sql string
+	var new_tagid []interface{}
 
-	book_sql = "SELECT title, author, publisher, id from Books WHERE "
+
+	book_sql = "SELECT title, author, publisher from Books WHERE "
 	for index, id := range tagid {
 		if index == 0 {
-			book_sql += book_sql + "tagid LIKE %" + id + "% "
+			book_sql += book_sql + "tagid LIKE CONCAT(?, '%')"
 
 		} else {
-			book_sql += book_sql + "AND tagid LIKE %" + id + "% "
+			book_sql += book_sql + " AND tagid LIKE CONCAT(?, '%')"
 		}
+		new_tagid = append(new_tagid, Partitionid(id))
 	}
 	// fmt.Print(sql)
 	Opendb()
 	defer db.Close()
 
-	rows_all, err := db.Query(book_sql)
+	rows_all, err := db.Query(book_sql,new_tagid...)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	for rows_all.Next() {
-		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id)
+		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
 
-		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher, book.Book_id}
+		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
 		Filter_book_data = append(Filter_book_data, book_data)
 	}
 
 	return Filter_book_data
 }
+
+func FilterBooks_ver2(tagid []string) [][]string {
+	var book structure.Books
+	var Filter_book_data [][]string
+
+	Opendb()
+	defer db.Close()
+
+	rows_all, err := db.Query("SELECT title, author, publisher, id, tagid from Books")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_all.Next() {
+		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id, &book.Book_tagid)
+		Filter := true
+		for _, t := range tagid{
+			fmt.Print(t)
+			if !strings.Contains(book.Book_tagid, Partitionid(t)){
+				Filter = false
+				break
+			}
+		}
+		if Filter{
+			book_data := []string{book.Book_title, book.Book_author, book.Book_publisher, GetRenterInfo(book.Book_id)}
+			Filter_book_data = append(Filter_book_data, book_data)
+		}
+	}
+	return Filter_book_data
+} 
 
 func GetUserinfo(id string, password string) (string, string) {
 	var student structure.Students
