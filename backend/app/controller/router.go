@@ -149,7 +149,7 @@ func Router(router *gin.Engine) {
 			publisher := v[2]
 			rentaluser_name := repository.GetRenterInfo(v[3])
 
-			fmt.Print(title, author, publisher, rentaluser_name, "\n")
+			// fmt.Print(title, author, publisher, rentaluser_name, "\n")
 
 			titlelist = append(titlelist, title)
 			authorlist = append(authorlist, author)
@@ -167,7 +167,7 @@ func Router(router *gin.Engine) {
 	router.POST("/book_detail", func(c *gin.Context) {
 
 		booktitle := c.PostForm("booktitle")
-		fmt.Print(booktitle)
+		// fmt.Print(booktitle)
 
 		bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetBookDetail(booktitle)
 
