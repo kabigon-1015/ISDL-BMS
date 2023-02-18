@@ -39,8 +39,8 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	repository.CreateTask_tag()
-	repository.CreateTask2()
+	// repository.CreateTask_tag()
+	// repository.CreateTask2()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -72,10 +72,15 @@ func Router(router *gin.Engine) {
 		fmt.Print(id)
 		name, email := repository.GetUserinfo(id, password)
 		fmt.Print(name, email)
-		c.JSON(200, gin.H{
-			"name":  name,
-			"email": email,
-		})
+		if (len(name)==0){
+			c.JSON(200, gin.H{})
+		}else{
+			c.JSON(200, gin.H{
+				"name":  name,
+				"email": email,
+			})
+		}
+		
 	})
 
 	router.POST("/filterbook", func(c *gin.Context) {

@@ -3,7 +3,6 @@
   <div id="contents">
     <div id="main">
       <span id="pagetop"></span>
-
       <section id="new">
         <h2>What's New</h2>
         <dl>
@@ -17,14 +16,6 @@
       </section>
       <!--/#new-->
     </div>
-    <!--/#main-->
-    <!--スライドショー-->
-    <!-- <aside id="mainimg">
-      <div class="slide0">slide0</div>
-      <div class="slide1">slide1</div>
-      <div class="slide2">slide2</div>
-      <div class="slide3">slide3</div>
-    </aside> -->
   </div>
   <!--/#contents-->
 </div>
@@ -36,15 +27,21 @@
 	width: 100%;
 	position: relative;
 	width: 100%;
-	top: 600px;	
+	top: 550px;	
 	right: 0%;
 }
 </style>
 
 <script>
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
 export default {
+  components: {
+  },
+  data(){
+    return{
+    }
+  },
+  methods:{
+  },
   head: {
     title() {
       return {

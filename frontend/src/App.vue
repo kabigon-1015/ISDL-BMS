@@ -1,9 +1,9 @@
 <template>
   <div id="container">
-    {{ this.name }}
+    <LoginIcon />
     <HomeHeader />
-	<router-view />
-	<!-- <HomeFooter /> -->
+    <router-view />
+	
 	<!--スライドショー-->
     <aside id="mainimg">
       <div class="slide0">slide0</div>
@@ -14,18 +14,25 @@
   </div>
 </template>
 
-<style>
-@import "./assets/css/style.css";
-@import "./assets/css/print.css";
-</style>
-
 <script>
 import HomeHeader from "./components/HomeHeader.vue";
-// import HomeFooter from "./components/HomeFooter.vue";
+import LoginIcon from "./components/LoginIcon.vue";
+
 export default {
   components: {
-    HomeHeader
-	// HomeFooter
+    HomeHeader,
+    LoginIcon
+  },
+  data() {
+    return {
+
+    }
+  },
+  mounted(){
+    
+  },
+  methods: {
+    
   },
   head: {
     title() {
@@ -42,4 +49,9 @@ export default {
   },
 };
 </script>
+
+<style>
+@import "./assets/css/style.css";
+@import "./assets/css/print.css";
+</style>
 

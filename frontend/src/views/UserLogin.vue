@@ -36,8 +36,6 @@
 <script>
 import axios from 'axios';
 
-//const uri = "http://localhost:8080/logincheck";
-
 export default {
     name:'UserLogin',
          data(){
@@ -55,16 +53,20 @@ export default {
       var params = new FormData();
       params.append("id", this.id);
       params.append("password", this.password);
-      const response = axios
+      axios
         .post("/login", params)
         .then((response) => {
-          console.log(response.data);
+          if (Object.keys(response.data).length  === 0){
+            alert("IDまたはパスワードが違います．");
+          }
+          else{
+            this.$store.dispatch('loginusername', response.data.name)
+          }
         })
         .catch((error) => {
           alert("データを送信できませんでした．");
         });
-      //alert(response.data.name);
-      this.$router.push({ path: '/' });
+      
     },
     signup: function(){
       this.$router.push({ path: '/signup' });
@@ -73,22 +75,7 @@ export default {
       this.$router.push({ path: '/resetpassword' });
       //this.$router.replace({ path: '/resetpassword' });
     },
-getresponse() {
 
-          return this.id
-},
-
-
-  //ログインボタン
-  //get_responseからresponseを抜き取れない
-    doLogin() {
-     
-    console.log(this.getresponse())
-    this.$store.dispatch("auth", {userId: this.getresponse(),userToken: 'dummy token'});     
-    console.log(this.$store.state.userId )
-     
-      this.$router.push('home');
-    }
   }
   
 };
