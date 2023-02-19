@@ -28,22 +28,6 @@
 						<td>{{ book.publisher }}</td>
 					</tr>
 				</tbody>
-				<thead>
-					<tr>
-						<th>タイトル</th>
-						<th>著者</th>
-						<th>出版社</th>
-						<th>貸出状況</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="tableData in filteredbooks" :key="tableData.name">
-						<td v-text="tableData.title"></td>
-						<td v-text="tableData.author"></td>
-						<td v-text="tableData.publisher"></td>
-						<td v-text="tableData.state"></td>
-					</tr>
-				</tbody>
 			</table>
           </div>
         </section>
@@ -79,31 +63,6 @@ export default {
 			keyword:'',
 		}
 	},
-	// created: function() {
-	// 	axios.post(`${URL}book_list`)
-	// 	.then(response => {
-	// 		// alert(response.status)
-	// 		// console.log(response.data)
-	// 		for(var i in response.data){
-	// 			console.log(response.data[i].rental_username)
-	// 			this.getData = {
-	// 				title:response.data[i].title,
-	// 				author:response.data[i].author,
-	// 				publisher:response.data[i].publisher,
-	// 				state: String(response.data[i].rentaluser_name)
-	// 			}
-	// 			console.log(response.data)
-	// 			if(this.getData.state == "null") {
-	// 				this.getData.state = '貸出可能'
-	// 			}
-	// 			this.tableData.push(this.getData)
-	// 		}	
-	// 	})
-	// 	.catch(error => {
-	// 		alert('データを送信できませんでした．')
-	// 		// alert(error)
-	// 	})
-	// },
 	methods: {
 		bookreturn:function () {
 			var params = new FormData()
@@ -129,7 +88,7 @@ export default {
 		},
 		sendreturn:function(){
 			var params = new FormData()
-			// params.append('user_id', this.$store.state.userID)
+			params.append('user_id', this.$store.state.userID)
 			params.append('isbn', this.sendisbn)
 			this.sendisbn = []
 			console.log(params['isbn'])
@@ -168,35 +127,6 @@ export default {
 				alert(error)
 			})
 			this.returnbooks.splice(0)
-		},
-	},
-	computed: {	
-		filteredbooks: function() {
-			var tableData = [];
-			var books=[];
-			var book;
-			for(var j in this.tableData){
-				book=this.tableData[j];
-				if(this.checked==true){
-					if(book.state=='貸出可能'){
-						// book.state = '貸出可能'
-						books.push(book);
-						// console.log(book)
-					}
-				}
-				else{
-					books.push(book);
-					// console.log(book)
-				}
-			}
-			
-			for(var i in books) {
-				book = books[i];
-				if(book.title.indexOf(this.keyword) !== -1 ) {
-					tableData.push(book);
-				}
-			}
-			return tableData;
 		},
 	}
 }
@@ -366,7 +296,7 @@ thead th {
 	padding: 8px 0;
 	/* color */
 	color: white;
-	background-color:#00d0ff;
+	background-color:#b3ae92;
 	border-top: 1px solid #a2a7af;
 	border-left: 1px solid #a2a7af;
 	border-right: 1px solid #a2a7af;

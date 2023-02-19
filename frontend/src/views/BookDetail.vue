@@ -3,30 +3,25 @@
     <div id="main">
       <section id="pagetop">
         <section class="box">
-            <h2 class="title">Book List<span>書籍一覧</span></h2>
-          <div>
+            <h2 class="title">Book Info<span>書籍情報</span></h2>
             <div class="boxes">
-          <input type="checkbox" id="box-1" v-model="checked" name="checkbox01">
-          <label for="box-1">貸出可能</label>
-        </div>
-			<table class="returntable">
-				<thead>
-					<tr>
-						<th>タイトル</th>
-						<th>著者</th>
-						<th>出版社</th>
-						<th>貸出状況</th>
-					</tr>
-				</thead>
-				<tbody>
-                    <td v-text="getData.title"></td>
-                    <td v-text="getData.author"></td>
-                    <td v-text="getData.publisher"></td>
-                    <td v-text="getData.item_caption"></td>
-                    <td v-text="getData.imageurl"></td>
-				</tbody>
-			</table>
+                <img :src="getData.imageurl" class="image">
+            </div>
+            <div class="boxes">
+                <ul class="cp_list">
+                    <li>書籍名</li>
+                    {{getData.title}}<br>
+                    <li>著者</li>
+                    {{getData.author}}<br>
+                    <li>出版社</li>
+                    {{getData.publisher}}<br>
+                    <li>内容</li>
+                    {{getData.item_caption}}
+                </ul>
           </div>
+          <!-- <router-link to="/booklist" class="btn btn--purple btn--radius btn--cubic"><i class="fas fa-angle-double-right fa-position-left"></i>戻る</router-link> -->
+          <br>
+          <button type="button" onclick="history.back()" class="btn btn--yellow btn--cubic">戻る</button>
         </section>
       </section>
     </div>
@@ -95,93 +90,48 @@ export default {
 </script>
 
 <style scoped>
-.cp_iptxt {
-  display: inline-block;
-  position: relative;
-  width: 30%;
-  margin: 40px 3%;
-  background-color: #b2adad;
+ul.cp_list {
+    font-size:15px;
+    display: inline-block;
+    width:45%;
+    position: absolute;
+    margin-right: 15%;
+    top:30%;
+    left:40%;
+	padding: 0.5em 1em 0.01em 2.3em;
+	list-style-type: none;
 }
-.cp_iptxt input[type="text"] {
-  font: 15px/24px sans-serif;
-  color: #000;
-  box-sizing: border-box;
-  width: 100%;
-  letter-spacing: 1px;
-  padding-left: 4em;
+ul.cp_list li {
+	position: relative;
+	padding: 0.5em 1em 0.01em 2.3em;
+	margin-bottom:1px;
+	border-bottom: 1px solid #c1bc9e;
 }
-.cp_iptxt input[type="text"]:focus {
-  outline: none;
+ul.cp_list li:after,
+ul.cp_list li:before{
+	content:'';
+	position: absolute;
+	border-radius: 50%;
 }
-.ef {
-  padding: 7px 14px;
-  transition: 0.4s;
-  border: 1px solid #1b2538;
-  background: transparent;
+ul.cp_list li:before {
+	top: 50%;
+	left: 0.2em;
+	width: 17px;
+	height: 17px;
+	background: #ebe6ce;
+	transform: translateY(-50%);
 }
-.ef ~ .focus_line:before,
-.ef ~ .focus_line:after {
-  position: absolute;
-  top: -1px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  content: "";
-  transition: 0.4s;
-  background-color: #da3c41;
+ul.cp_list li:after {
+	top: 1.1em;
+	left: 0.7em;
+	width: 14px;
+	height: 14px;
+	background: #c1bc9e;
 }
-.ef ~ .focus_line:after {
-  top: auto;
-  bottom: 0;
-}
-.ef ~ .focus_line i:before,
-.ef ~ .focus_line i:after {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 2px;
-  height: 0;
-  content: "";
-  transition: 0.6s;
-  background-color: #da3c41;
-}
-.ef ~ .focus_line i:after {
-  right: 0;
-  left: auto;
-}
-.ef:focus ~ .focus_line:before,
-.ef:focus ~ .focus_line:after,
-.cp_iptxt.ef ~ .focus_line:before,
-.cp_iptxt.ef ~ .focus_line:after {
-  left: 0;
-  width: 100%;
-  transition: 0.4s;
-}
-.ef:focus ~ .focus_line i:before,
-.ef:focus ~ .focus_line i:after,
-.cp_iptxt.ef ~ .focus_line i:before,
-.cp_iptxt.ef ~ .focus_line i:after {
-  top: -1px;
-  height: 100%;
-  transition: 0.6s;
-}
-.ef ~ label {
-  position: absolute;
-  font-size: 20px;
-  top: 4px;
-  left: 14px;
-  width: 5%;
-  transition: 0.3s;
-  letter-spacing: 0.5px;
-  color: #040404;
-}
-.ef:focus ~ label,
-.cp_iptxt.ef ~ label {
-  font-size: 25px;
-  top: -40px;
-  left: 0;
-  transition: 0.3s;
-  color: #fc040c;
+.image{
+  width:23%;
+  left:50px;
+  bottom:10%;
 }
 
 *,
@@ -201,8 +151,8 @@ html {
 a.btn,
 button.btn {
   border: none;
-  font-size: 1rem;
-  font-weight: 200;
+  font-size: 12px;
+  font-weight: 1000;
   line-height: 0.7;
   position: relative;
   display: inline-block;
@@ -221,110 +171,16 @@ button.btn {
   color: #212529;
   border-radius: 0.5rem;
 }
-
 button.btn--yellow {
-  color: #000;
-  background-color: #00d0ff;
-  border-bottom: 5px solid #0096cc;
+  color: white;
+  background-color: #b3ae92;
+  border-bottom: 5px solid #7f7b68;
 }
 
 button.btn--yellow:hover {
   margin-top: 3px;
-  color: #000;
-  background: #00d0ff;
-  border-bottom: 2px solid #0096cc;
-}
-table {
-  position: absolute;
-  table-layout: fixed;
-  /* top: 130px; */
-  size: 200px;
-  border-collapse: collapse;
-  border-spacing: 5px;
-  margin: 0 auto;
-  padding: 0;
-  width: 70%;
-  margin-left: auto;
-  margin-right: auto;
-}
-table tr {
-	height: 20px;
-}
-/* thead */
-thead th {
-	font-size: 12px;
-	/* width: 100px; */
-	text-align: center;
-	padding: 8px 0;
-	/* color */
-	color: white;
-	background-color:#1b2538;
-	border-top: 1px solid #a2a7af;
-	border-left: 1px solid #a2a7af;
-	border-right: 1px solid #a2a7af;
-	border-bottom:3px solid #a2a7af;
-}
-/* tbody */
-tbody {
-	overflow-y: scroll;
-}
-.tbody::-webkit-scrollbar {  /* Chrome, Safari 対応 */
-        display:none;
-    }
-tbody td {
-	/* width: 30%; */
-	text-align: center;
-	padding: 8px;
-	/* color */
-	color: black;
-	background-color: #e0dada;
-	border-bottom: 1px solid #a2a7af;
-	border-left:1px solid #a2a7af;
-	border-right:1px solid #a2a7af;
-}
-
-/*Checkboxes styles*/
-input[type="checkbox"] { display: none; }
-
-input[type="checkbox"] + label {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  padding-bottom:15px;
-  margin-bottom: 25px;
-  font: 14px/20px 'Open Sans', Arial, sans-serif;
-  color: #ddd;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-input[type="checkbox"] + label:last-child { margin-bottom: 0; }
-
-input[type="checkbox"] + label:before {
-  content: '';
-  display: block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #6cc0e5;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: .6;
-  -webkit-transition: all .12s, border-color .08s;
-  transition: all .12s, border-color .08s;
-}
-
-input[type="checkbox"]:checked + label:before {
-  width: 10px;
-  top: -5px;
-  left: 5px;
-  border-radius: 0;
-  opacity: 1;
-  border-top-color: transparent;
-  border-left-color: transparent;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
+  color: white;
+  background: #b3ae92;
+  border-bottom: 2px solid #7f7b68;
 }
 </style>
