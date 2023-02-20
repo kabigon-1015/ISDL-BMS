@@ -4,28 +4,36 @@
       <section id="pagetop">
         <section class="box">
           <h2 class="title">Login<span>ログイン</span></h2>
-          <form v-on:submit.prevent="doLogin">
-        <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="id" placeholder="@mikilab.doshisha.ac.jp" />
-              <label>Email</label>
+          <h2>ユーザIDとパスワードを入力してください</h2>
+            <div class="cp_iptxt">
+              <input
+                class="ef"
+                type="text"
+                v-model="id"
+                placeholder="userID"
+              />
+              <!-- <label>Email</label> -->
               <span class="focus_line"><i></i></span>
-        </div>
-        <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="password" placeholder="" />
-              <label>PassWord</label>
+            </div>
+            <div class="cp_iptxt">
+              <input class="ef" type="text" v-model="password" placeholder="password" />
+              <!-- <label>PassWord</label> -->
               <span class="focus_line"><i></i></span>
-        </div>
+            </div>
 
-        <button v-on:click="login" class="btn btn--yellow btn--cubic">
+            <button v-on:click="login" class="btn btn--yellow btn--cubic">
               Login
-        </button>
-        <button v-on:click="signup" class="btn btn--yellow btn--cubic">
+            </button>
+            <!-- <button v-on:click="signup" class="btn btn--yellow btn--cubic">
               Sign Up
-        </button>
-        <button v-on:click="forgetpassword" class="btn btn--yellow btn--cubic">
+            </button> -->
+            <!-- <button
+              v-on:click="forgetpassword"
+              class="btn btn--yellow btn--cubic"
+            >
               Forget Password
-        </button>
-        </form>
+            </button> -->
+          
         </section>
       </section>
     </div>
@@ -34,59 +42,55 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-    name:'UserLogin',
-         data(){
+  name: "UserLogin",
+  data() {
     return {
-        id:'',
-      password:'',
-      student_name:'',
-      myresponse:''
+      id: "",
+      password: "",
+      student_name: "",
+      myresponse: "",
     };
   },
 
-  
   methods: {
-    login: function(){
+    login: function () {
       var params = new FormData();
       params.append("id", this.id);
       params.append("password", this.password);
       axios
         .post("/login", params)
         .then((response) => {
-          if (Object.keys(response.data).length  === 0){
+          if (Object.keys(response.data).length === 0) {
             alert("IDまたはパスワードが違います．");
-          }
-          else{
-            this.$store.dispatch('loginusername', response.data.name)
+          } else {
+            this.$store.dispatch("loginusername", response.data.name);
           }
         })
         .catch((error) => {
           alert("データを送信できませんでした．");
         });
-      
     },
-    signup: function(){
-      this.$router.push({ path: '/signup' });
+    signup: function () {
+      this.$router.push({ path: "/signup" });
     },
-    forgetpassword: function(){
-      this.$router.push({ path: '/resetpassword' });
+    forgetpassword: function () {
+      this.$router.push({ path: "/resetpassword" });
       //this.$router.replace({ path: '/resetpassword' });
     },
-
-  }
-  
+  },
 };
 </script>
 
 <style scoped>
 .cp_iptxt {
-  display: inline-block;
+  /* display: inline-block; */
   position: relative;
-  width: 30%;
-  margin: 40px 3%;
+  margin:  0 auto;
+  width: 40%;
+  margin-top: 40px;
   background-color: #b2adad;
 }
 .cp_iptxt input[type="text"] {
@@ -95,7 +99,7 @@ export default {
   box-sizing: border-box;
   width: 100%;
   letter-spacing: 1px;
-  padding-left: 4em;
+  /* padding-left: 4em; */
 }
 .cp_iptxt input[type="text"]:focus {
   outline: none;
@@ -178,12 +182,14 @@ export default {
 .btn,
 a.btn,
 button.btn {
+  margin-top: 40px;
   border: none;
   font-size: 1rem;
   font-weight: 200;
   line-height: 0.7;
   position: relative;
-  display: inline-block;
+  margin:  0 auto;
+  /* display: inline-block; */
   padding: 1rem 2rem;
   cursor: pointer;
   -webkit-user-select: none;
@@ -192,7 +198,7 @@ button.btn {
   user-select: none;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
-  text-align: center;
+  /* text-align: center; */
   vertical-align: middle;
   text-decoration: none;
   letter-spacing: 0.1em;
