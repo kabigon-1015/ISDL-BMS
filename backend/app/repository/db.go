@@ -130,7 +130,6 @@ func FilterBooks(tagid []string) [][]string {
 	var book_sql string
 	var new_tagid []interface{}
 
-
 	book_sql = "SELECT title, author, publisher from Books WHERE "
 	for index, id := range tagid {
 		if index == 0 {
@@ -145,7 +144,7 @@ func FilterBooks(tagid []string) [][]string {
 	Opendb()
 	defer db.Close()
 
-	rows_all, err := db.Query(book_sql,new_tagid...)
+	rows_all, err := db.Query(book_sql, new_tagid...)
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -177,20 +176,20 @@ func FilterBooks_ver2(tagid []string) [][]string {
 	for rows_all.Next() {
 		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id, &book.Book_tagid)
 		Filter := true
-		for _, t := range tagid{
+		for _, t := range tagid {
 			fmt.Print(t)
-			if !strings.Contains(book.Book_tagid, Partitionid(t)){
+			if !strings.Contains(book.Book_tagid, Partitionid(t)) {
 				Filter = false
 				break
 			}
 		}
-		if Filter{
+		if Filter {
 			book_data := []string{book.Book_title, book.Book_author, book.Book_publisher, GetRenterInfo(book.Book_id)}
 			Filter_book_data = append(Filter_book_data, book_data)
 		}
 	}
 	return Filter_book_data
-} 
+}
 
 func GetUserinfo(id string, password string) (string, string) {
 	var student structure.Students
@@ -209,6 +208,52 @@ func GetUserinfo(id string, password string) (string, string) {
 	}
 
 	return student.Name, student.Email
+}
+
+func Rentbook(id string, isbn string) string {
+	var book_id string
+	var search_result string
+	var res string
+
+	search_result = "null"
+
+	Opendb()
+	defer db.Close()
+
+	rows_bookid, err := db.Query("SELECT id FROM Books WHERE isbn = ?", isbn)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_bookid.Next() {
+		rows_bookid.Scan(&book_id)
+	}
+	fmt.Print(book_id)
+	rows_histid, err := db.Query("SELECT id FROM Rent_hist WHERE bookid = ? AND returned=?", book_id, "1")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_histid.Next() {
+		rows_histid.Scan(&search_result)
+	}
+	// fmt.Print(search_result)
+	if search_result == "null" {
+
+		insert, err := db.Prepare("INSERT INTO Rent_hist(bookid,renterid,returned) VALUES(?, ?, ?)")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		insert.Exec(book_id, id, "1")
+
+		res = "貸出完了"
+	} else {
+		res = "貸出中です"
+	}
+
+	return res
 }
 
 func Returnbook(id string, isbn string) {
@@ -252,15 +297,15 @@ func GetAllBookData() [][]string {
 	Opendb()
 	defer db.Close()
 
-	rows_all, err := db.Query("SELECT title, author, publisher, id from Books")
+	rows_all, err := db.Query("SELECT title, isbn, author, publisher, id from Books")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	for rows_all.Next() {
-		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id)
+		rows_all.Scan(&book.Book_title, &book.Book_isbn, &book.Book_author, &book.Book_publisher, &book.Book_id)
 
-		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher, book.Book_id}
+		book_data := []string{book.Book_title, book.Book_isbn, book.Book_author, book.Book_publisher, book.Book_id}
 		all_book_data = append(all_book_data, book_data)
 	}
 
