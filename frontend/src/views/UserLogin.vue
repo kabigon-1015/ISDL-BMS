@@ -67,6 +67,7 @@ export default {
             alert("IDまたはパスワードが違います．");
           } else {
             this.$store.dispatch("loginusername", response.data.name);
+            this.$store.dispatch("getuserid", this.id);
           }
         })
         .catch((error) => {

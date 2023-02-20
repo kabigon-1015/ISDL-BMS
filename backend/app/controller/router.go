@@ -5,8 +5,8 @@ import (
 
 	"fmt"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -41,6 +41,7 @@ func Router(router *gin.Engine) {
 	router.Use(sessions.Sessions("mysession", store))
 	// repository.CreateTask_tag()
 	// repository.CreateTask2()
+	// repository.InsertBooks()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -72,15 +73,15 @@ func Router(router *gin.Engine) {
 		fmt.Print(id)
 		name, email := repository.GetUserinfo(id, password)
 		fmt.Print(name, email)
-		if (len(name)==0){
+		if len(name) == 0 {
 			c.JSON(200, gin.H{})
-		}else{
+		} else {
 			c.JSON(200, gin.H{
 				"name":  name,
 				"email": email,
 			})
 		}
-		
+
 	})
 
 	router.POST("/filterbook", func(c *gin.Context) {
@@ -94,7 +95,7 @@ func Router(router *gin.Engine) {
 		len, _ := strconv.Atoi(_len)
 		for i := 0; i < len; i++ {
 			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
-			tagid = append(tagid, repository.GetTagid(c.PostForm("tag[" + strconv.Itoa(i) + "]")))
+			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
 			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 		}
 		fmt.Print(tagid)
@@ -121,18 +122,48 @@ func Router(router *gin.Engine) {
 		})
 	})
 
-	router.POST("/return_register", func(c *gin.Context) {
+	router.POST("/rental_register", func(c *gin.Context) {
+		userid := c.PostForm("user_id")
 		isbns := c.PostForm("isbn")
 		isbn := strings.Split(isbns, ",")
+		// fmt.Print(userid)
+		message := " "
 		// fmt.Print(isbn)
-		if len(isbn) != 0 {
-			for _, v := range isbn {
-				repository.Returnbook("1116190020", v)
+		if userid == "null" {
+			c.JSON(200, gin.H{
+				"message": "ログインしてください",
+			})
+		} else {
+			if len(isbn) != 0 {
+				for _, v := range isbn {
+					message = repository.Rentbook(userid, v)
+				}
 			}
+			c.JSON(200, gin.H{
+				"message": message,
+			})
 		}
-		c.JSON(200, gin.H{
-			"message": "返却完了",
-		})
+	})
+
+	router.POST("/return_register", func(c *gin.Context) {
+		userid := c.PostForm("user_id")
+		isbns := c.PostForm("isbn")
+		isbn := strings.Split(isbns, ",")
+		fmt.Print(userid)
+		if userid == "null" {
+			c.JSON(200, gin.H{
+				"message": "ログインしてください",
+			})
+		} else {
+			if len(isbn) != 0 {
+				for _, v := range isbn {
+					repository.Returnbook(userid, v)
+				}
+			}
+			c.JSON(200, gin.H{
+				"message": "返却完了",
+			})
+		}
 	})
 
 	router.POST("/book_list", func(c *gin.Context) {
@@ -140,24 +171,28 @@ func Router(router *gin.Engine) {
 		var authorlist []string
 		var publisherlist []string
 		var rentaluser_namelist []string
+		var isbnlist []string
 
 		booklist_temp := repository.GetAllBookData()
 
 		for _, v := range booklist_temp {
 			title := v[0]
-			author := v[1]
-			publisher := v[2]
-			rentaluser_name := repository.GetRenterInfo(v[3])
+			isbn := v[1]
+			author := v[2]
+			publisher := v[3]
+			rentaluser_name := repository.GetRenterInfo(v[4])
 
-			// fmt.Print(title, author, publisher, rentaluser_name, "\n")
+			// fmt.Print(title, isbn, author, publisher, rentaluser_name, "\n")
 
 			titlelist = append(titlelist, title)
+			isbnlist = append(isbnlist, isbn)
 			authorlist = append(authorlist, author)
 			publisherlist = append(publisherlist, publisher)
 			rentaluser_namelist = append(rentaluser_namelist, rentaluser_name)
 		}
 		c.JSON(200, gin.H{
 			"title":           titlelist,
+			"isbn":            isbnlist,
 			"author":          authorlist,
 			"publisher":       publisherlist,
 			"rentaluser_name": rentaluser_namelist,

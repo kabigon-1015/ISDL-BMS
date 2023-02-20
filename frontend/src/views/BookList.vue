@@ -23,7 +23,8 @@
 						<td class=title><router-link :to="{name:'detail',query:{title:tableData.title}}" v-text="tableData.title"></router-link></td>
 						<td class=author v-text="tableData.author"></td>
 						<td class=publisher v-text="tableData.publisher"></td>
-						<td class=status v-text="tableData.state"></td>
+						<td class=status v-if="tableData.state=='null'"><button variant="secondary" class="btn btn--yellow btn--cubic" v-on:click="sendrental(tableData.isbn)">借りる</button></td>
+						<td class=status v-else v-text="tableData.state"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -65,19 +66,20 @@ export default {
 		axios.post(`${URL}book_list`)
 		.then(response => {
 			// alert(response.status)
-			// console.log(response.data)
+			console.log(response.data.isbn)
 			for(var i in response.data.title){
                 console.log(i)
                 this.getData = {
                     title:response.data.title[i],
+					isbn:response.data.isbn[i],
                     author:response.data.author[i],
                     publisher:response.data.publisher[i],
                     state: String(response.data.rentaluser_name[i])
                 }
                 console.log(response.data)
-                if(this.getData.state == "null") {
-                    this.getData.state = '貸出可能'
-                }
+                // if(this.getData.state == "null") {
+                //     this.getData.state = '貸出可能'
+                // }
                 this.tableData.push(this.getData)
             }
 		})
@@ -85,6 +87,51 @@ export default {
 			alert('データを送信できませんでした．')
 			// alert(error)
 		})
+	},
+	methods:{
+		sendrental(isbn){
+			var params = new FormData()
+			params.append('user_id', this.$store.state.userid)
+			params.append('isbn', isbn)
+			this.sendisbn = []
+			console.log(params['isbn'])
+			axios.post(`${URL}rental_register`, params)
+			.then(response => {
+				alert(response.data['message'])
+				axios.post(`${URL}book_list`)
+				.then(response => {
+					// alert(response.status)
+					// console.log(response.data)
+					this.tableData=[]
+					for(var i in response.data.title){
+						console.log(i)
+						this.getData = {
+							title:response.data.title[i],
+							isbn:response.data.isbn[i],
+							author:response.data.author[i],
+							publisher:response.data.publisher[i],
+							state: String(response.data.rentaluser_name[i])
+						}
+						console.log(response.data)
+						// if(this.getData.state == "null") {
+						// 	this.getData.state = '貸出可能'
+						// }
+						this.tableData.push(this.getData)
+					}	
+				})
+				.catch(error => {
+					alert('データを送信できませんでした．')
+					console.log(error)
+					// alert(error)
+				})
+				console.log(response.data)
+			})
+			.catch(error => {
+				alert('データを送信できませんでした．')
+				alert(error)
+			})
+			this.returnbooks.splice(0)
+		},
 	},
 	computed: {	
 		filteredbooks: function() {
@@ -94,7 +141,7 @@ export default {
 			for(var j in this.tableData){
 				book=this.tableData[j];
 				if(this.checked==true){
-					if(book.state=='貸出可能'){
+					if(book.state=='null'){
 						// book.state = '貸出可能'
 						books.push(book);
 						// console.log(book)
