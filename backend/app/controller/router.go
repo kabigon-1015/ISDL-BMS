@@ -39,9 +39,9 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	// repository.CreateTask_tag()
-	// repository.CreateTask2()
-	// repository.InsertBooks()
+	repository.CreateTask_tag()
+	repository.CreateTask2()
+	//repository.InsertBooks()
 	router.GET("/", func(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -119,6 +119,24 @@ func Router(router *gin.Engine) {
 			"author":          authorlist,
 			"publisher":       publisherlist,
 			"rentaluser_name": rentaluser_namelist,
+		})
+	})
+
+	router.POST("/addbooktag", func(c *gin.Context){
+		var tagid []string
+
+		isbn := c.PostForm("isbn")
+		_len := c.PostForm("taglength")
+		len, _ := strconv.Atoi(_len)
+		for i := 0; i < len; i++ {
+			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
+			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+		}
+
+		repository.AddBookTag(tagid, isbn)
+		c.JSON(200, gin.H{
+			"message": "success",
 		})
 	})
 

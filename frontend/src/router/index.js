@@ -9,6 +9,7 @@ import ResetPassword from '../views/ResetPassword.vue'
 import BookList from '../views/BookList.vue'
 import BookResearch from '../views/BookResearch.vue'
 import BookDetail from '../views/BookDetail.vue'
+import AddBookTag from '../views/AddBookTag.vue'
 
 const routes = [
   {
@@ -60,6 +61,11 @@ const routes = [
     path: '/booklist/detail',
     name: 'detail',
     component: BookDetail,
+  },
+  {
+    path: '/addbooktag',
+    name: 'addbooktag',
+    component: AddBookTag,
   },
 ]
 
