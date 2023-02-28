@@ -131,7 +131,6 @@ func Router(router *gin.Engine) {
 		for i := 0; i < len; i++ {
 			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
-			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 		}
 
 		repository.AddBookTag(tagid, isbn)
