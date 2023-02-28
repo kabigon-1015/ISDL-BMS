@@ -65,7 +65,8 @@ func CreateTask2() {
 	}
 	// insert.Exec(2,"isbn","岡")
 	insert.Exec(2, "実践力を身につけるPythonの教科書", "ジッセンリョクヲミニツケルパイソンノキョウカショ", "#1#", 9784839960247, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
-	insert.Exec(4, "実践力を身につけるGANの教科書", "ジッセンリョクヲミニツケルギャンノキョウカショ", "#1##2#", 9784839960257, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+	insert.Exec(4, "実践力を身につけるGANの教科書", "ジッセンリョクヲミニツケルギャンノキョウカショ", "#1##2#", 9784839960258, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
+	insert.Exec(5, "実践力を身につけるLSTMの教科書", "ジッセンリョクヲミニツケルギャンノキョウカショ", "#1#", 9784839960259, "クジラ飛行机", "クジラヒコウヅクエ", "マイナビ出版", "基本文法から始めてアプリ開発までしっかり解説", "https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200")
 }
 
 func Researchbook(isbn string) string {
@@ -189,6 +190,31 @@ func FilterBooks_ver2(tagid []string) [][]string {
 		}
 	}
 	return Filter_book_data
+}
+
+func AddBookTag(tagid []string, isbn string){
+	var tag_id string
+	var alltag string
+
+	Opendb()
+	defer db.Close()
+
+	rows_tagid, err := db.Query("SELECT tagid FROM Books WHERE isbn = ?", isbn)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_tagid.Next() {
+		rows_tagid.Scan(&tag_id)
+	}
+	fmt.Print(tag_id)
+
+	for _, t := range tagid {
+		alltag = alltag + Partitionid(t)
+	}
+
+	_ = db.QueryRow("UPDATE Books SET tagid = ? WHERE isbn = ?", alltag, isbn)
 }
 
 func GetUserinfo(id string, password string) (string, string) {
