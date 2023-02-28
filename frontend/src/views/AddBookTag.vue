@@ -120,7 +120,7 @@ export default {
           console.log(response.data);
         })
         .catch((error) => {
-          alert("データを送信できませんでした．");
+          alert("データを送信できませんでした");
         });
     },
     catchtag(tagdata){
