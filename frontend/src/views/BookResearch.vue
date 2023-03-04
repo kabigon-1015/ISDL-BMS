@@ -42,7 +42,6 @@
 			</table>
         </section>
       </section>
-      <!-- {{ this.tag }} -->
     </div>
     <!--/#main-->
   </div>
@@ -107,6 +106,9 @@ export default {
 			tableData: [],
     };
   },
+  mounted(){
+    this.$store.dispatch("getcurrentpass", '/rental/BookResearch');
+  },
   methods: {
     research: function () {
 
@@ -166,14 +168,10 @@ export default {
 </script>
 
 <style scoped>
-/* body {
-  font-family: "Open Sans", sans-serif;
-  line-height: 1.25;
-} */
 .tagbtn{
   width: 500px;
   height: 200px;
-  flex-wrap:wrap;/* これを指定する */
+  flex-wrap:wrap;
   
 }
 .rental{

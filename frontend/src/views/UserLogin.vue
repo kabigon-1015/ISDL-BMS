@@ -20,10 +20,14 @@
               <!-- <label>PassWord</label> -->
               <span class="focus_line"><i></i></span>
             </div>
-
+            <div class="loginbtn">
             <button v-on:click="login" class="btn btn--yellow btn--cubic">
               Login
             </button>
+            </div>
+            <div class="signup">
+              <router-link to="/signup">新規登録の方はこちら</router-link>
+            </div>
             <!-- <button v-on:click="signup" class="btn btn--yellow btn--cubic">
               Sign Up
             </button> -->
@@ -86,6 +90,21 @@ export default {
 </script>
 
 <style scoped>
+.signup{
+  position: relative;
+  margin:  0 auto;
+  margin-top: 40px;
+  width: 150px;
+}
+.signup a{
+  font-size:15px;
+}
+.loginbtn{
+  position: relative;
+  margin:  0 auto;
+  margin-top: 40px;
+  width: 150px;
+}
 .cp_iptxt {
   /* display: inline-block; */
   position: relative;
@@ -181,16 +200,16 @@ export default {
 }
 
 .btn,
-a.btn,
 button.btn {
-  margin-top: 40px;
+  /* margin-top: 40px; */
   border: none;
   font-size: 1rem;
   font-weight: 200;
   line-height: 0.7;
-  position: relative;
-  margin:  0 auto;
-  /* display: inline-block; */
+  width: 150px;
+  /* position: relative; */
+  /* margin:  0 auto; */
+  display: inline-block;
   padding: 1rem 2rem;
   cursor: pointer;
   -webkit-user-select: none;
