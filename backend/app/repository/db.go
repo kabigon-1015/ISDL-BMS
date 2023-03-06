@@ -136,7 +136,7 @@ func GetAllTag() []string{
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
+	
 	for rows_title.Next() {
 		rows_title.Scan(&tag.TagName)
 		alltagname = append(alltagname, tag.TagName)
@@ -145,40 +145,17 @@ func GetAllTag() []string{
 	return alltagname
 }
 
-func FilterBooks(tagid []string) [][]string {
-	var book structure.Books
-	var Filter_book_data [][]string
-	var book_sql string
-	var new_tagid []interface{}
-
-	book_sql = "SELECT title, author, publisher from Books WHERE "
-	for index, id := range tagid {
-		if index == 0 {
-			book_sql += book_sql + "tagid LIKE CONCAT(?, '%')"
-
-		} else {
-			book_sql += book_sql + " AND tagid LIKE CONCAT(?, '%')"
-		}
-		new_tagid = append(new_tagid, Partitionid(id))
-	}
-	// fmt.Print(sql)
+func SignUp(userid string,password string,username string,emailadress string){
 	Opendb()
 	defer db.Close()
 
-	rows_all, err := db.Query(book_sql, new_tagid...)
+	insert, err := db.Prepare("INSERT INTO Students(id,name,password,email) VALUES(?, ?, ?, ?)")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	for rows_all.Next() {
-		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
-
-		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
-		Filter_book_data = append(Filter_book_data, book_data)
-	}
-
-	return Filter_book_data
+	// insert.Exec(2,"isbn","岡")
+	insert.Exec(userid,username,password,emailadress)
 }
 
 func FilterBooks_ver2(tagid []string) [][]string {

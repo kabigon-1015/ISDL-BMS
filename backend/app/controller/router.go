@@ -84,6 +84,20 @@ func Router(router *gin.Engine) {
 
 	})
 
+	router.POST("/signup", func(c *gin.Context) {
+		userid := c.PostForm("userid")
+		password := c.PostForm("password")
+		username := c.PostForm("username")
+		emailadress := c.PostForm("emailadress")
+		
+		repository.SignUp(userid,password,username,emailadress)
+		
+			c.JSON(200, gin.H{
+				"name":  username,
+				"id": userid,
+			})
+	})
+
 	router.POST("/filterbook", func(c *gin.Context) {
 		var titlelist []string
 		var authorlist []string
