@@ -27,8 +27,12 @@
             書籍名：{{getData.title}}<br>
             著者：{{getData.author}}<br>
             出版社：{{getData.publisher}}<br>
-            内容：{{getData.content}}
+            内容：{{getData.content}}<br>
+            タグ：
           </p>
+          <div v-for="t in tag" :key="t">
+            {{ t }}
+          </div>
           </div>
             <h2>書籍に関連するタグを選んで下さい</h2>
             <div class="tagbtn">
@@ -138,7 +142,7 @@ export default {
     },
     addtagbook: function (){
         var params = new FormData();
-        params.append('isbn', this.book)
+        params.append('isbn', this.isbn)
       params.append('taglength', this.tag.length)
       this.tag.forEach((text, index) => {
         params.append('tag[' + index + ']', text);
