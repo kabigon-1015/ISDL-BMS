@@ -126,7 +126,7 @@ func GetTagid(tagname string) string {
 	return tag.Id
 }
 
-func SignUp(userid string,password string,username string,emailadress string){
+func SignUp(userid string, password string, username string, emailadress string) {
 	Opendb()
 	defer db.Close()
 
@@ -136,7 +136,7 @@ func SignUp(userid string,password string,username string,emailadress string){
 		log.Fatal(err.Error())
 	}
 	// insert.Exec(2,"isbn","岡")
-	insert.Exec(userid,username,password,emailadress)
+	insert.Exec(userid, username, password, emailadress)
 }
 
 func FilterBooks(tagid []string) [][]string {
@@ -206,7 +206,7 @@ func FilterBooks_ver2(tagid []string) [][]string {
 	return Filter_book_data
 }
 
-func AddBookTag(tagid []string, isbn string){
+func AddBookTag(tagid []string, isbn string) {
 	var alltag string
 
 	Opendb()
@@ -220,13 +220,13 @@ func AddBookTag(tagid []string, isbn string){
 	fmt.Print(alltag)
 
 	upd, err := db.Prepare("UPDATE Books SET tagid = ? WHERE isbn = ?")
-    if err != nil {
-        log.Fatal(err)
-    }
-    upd.Exec(alltag, isbn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	upd.Exec(alltag, isbn)
 }
 
-func GetUserinfo(id string, password string) (string, string) {
+func VeryfyUser(id string, password string) (string, string) {
 	var student structure.Students
 
 	Opendb()
@@ -243,6 +243,76 @@ func GetUserinfo(id string, password string) (string, string) {
 	}
 
 	return student.Name, student.Email
+}
+
+func GetUserInfo(id string) ([][]string, [][]string) {
+	var rent_hist structure.Rent_hist
+	var book structure.Books
+	var renthist_books [][]string
+	var rented_books [][]string
+
+	Opendb()
+	defer db.Close()
+
+	//貸出履歴
+	rows_renthist, err := db.Query("SELECT id FROM Rent_hist WHERE renterid = ? AND returned = ?", id, "0")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_renthist.Next() {
+		rows_renthist.Scan(&rent_hist.Hist_id)
+		rows_rentbooks, err := db.Query("SELECT bookid FROM Rent_hist WHERE id = ?", rent_hist.Hist_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentbooks.Next() {
+			rows_rentbooks.Scan(&book.Book_id)
+		}
+
+		rows_rentbooktitle, err := db.Query("SELECT title, author, publisher FROM books WHERE id = ?", book.Book_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentbooktitle.Next() {
+			rows_rentbooktitle.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
+		}
+
+		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
+		renthist_books = append(renthist_books, book_data)
+	}
+
+	//貸出中
+	rows_rented, err := db.Query("SELECT id FROM Rent_hist WHERE renterid = ? AND returned = ?", id, "1")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_rented.Next() {
+		rows_rented.Scan(&rent_hist.Hist_id)
+		rows_rentedbooks, err := db.Query("SELECT bookid FROM Rent_hist WHERE id = ?", rent_hist.Hist_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentedbooks.Next() {
+			rows_rentedbooks.Scan(&book.Book_id)
+		}
+
+		rows_rentedbooktitle, err := db.Query("SELECT title, author, publisher FROM books WHERE id = ?", book.Book_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentedbooktitle.Next() {
+			rows_rentedbooktitle.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
+		}
+
+		rented_book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
+		rented_books = append(rented_books, rented_book_data)
+	}
+
+	return renthist_books, rented_books
 }
 
 func Rentbook(id string, isbn string) string {
@@ -385,7 +455,7 @@ func GetBookDetail(title string) (string, string, string, string) {
 	Opendb()
 	defer db.Close()
 
-	rows_detail, err := db.Query("SELECT author, publisher, item_caption, image_url from Books where title=?", title)
+	rows_detail, err := db.Query("SELECT author, publisher, overview, image_url from Books where title=?", title)
 
 	if err != nil {
 		log.Fatal(err.Error())
