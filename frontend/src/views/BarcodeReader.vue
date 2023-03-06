@@ -53,6 +53,9 @@ export default {
       book:book
     };
   },
+  mounted(){
+    this.$store.dispatch("getcurrentpass", '/rental/BarcodeReader');
+  },
   methods: {
     research: function () {
       var params = new FormData();
