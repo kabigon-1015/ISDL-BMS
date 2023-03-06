@@ -110,7 +110,7 @@ export default {
       isbn: "",
       tags:tags,
       tag:[],
-      id: 0,
+      id: 725,
       getData:[],
 			tableData: [],
     };
