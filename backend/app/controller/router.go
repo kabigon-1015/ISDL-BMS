@@ -39,8 +39,8 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	repository.CreateTask_tag()
-	repository.CreateTask2()
+	//repository.CreateTask_tag()
+	//repository.CreateTask2()
 	//repository.InsertBooks()
 	router.GET("/", func(c *gin.Context) {
 
@@ -125,7 +125,7 @@ func Router(router *gin.Engine) {
 	router.POST("/addbooktag", func(c *gin.Context){
 		var tagid []string
 
-		isbn := c.PostForm("isbn")
+		id := c.PostForm("id")
 		_len := c.PostForm("taglength")
 		len, _ := strconv.Atoi(_len)
 		for i := 0; i < len; i++ {
@@ -133,9 +133,16 @@ func Router(router *gin.Engine) {
 			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
 		}
 
-		repository.AddBookTag(tagid, isbn)
+		repository.AddBookTag(tagid, id)
 		c.JSON(200, gin.H{
 			"message": "success",
+		})
+	})
+
+	router.POST("/gettag", func(c *gin.Context){
+		alltagname := repository.GetAllTag()
+		c.JSON(200, gin.H{
+			"alltagname": alltagname,
 		})
 	})
 
@@ -222,6 +229,22 @@ func Router(router *gin.Engine) {
 		// fmt.Print(booktitle)
 
 		bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetBookDetail(booktitle)
+
+		c.JSON(200, gin.H{
+			"title":        booktitle,
+			"author":       bookauthor,
+			"publisher":    bookpublisher,
+			"item_caption": bookitem_caption,
+			"imageurl":     bookimageurl,
+		})
+	})
+
+	router.POST("/taged_book_info", func(c *gin.Context) {
+
+		id := c.PostForm("id")
+		// fmt.Print(booktitle)
+
+		booktitle, bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetTagedBookInfo(id)
 
 		c.JSON(200, gin.H{
 			"title":        booktitle,

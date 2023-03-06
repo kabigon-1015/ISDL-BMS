@@ -5,15 +5,24 @@
         <section class="box">
           <h2 class="title">AddTag<span>タグ追加</span></h2>
           <div>
-            <div>
-            <h2>タグを追加する書籍のISBNをバーコードリーダーで読み取って下さい</h2>
-            <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="isbn" placeholder="" />
-              <label>ISBN</label>
-              <span class="focus_line"><i></i></span>
+            <div class="boxes">
+                <img :src="getData.imageurl" class="image">
             </div>
+            <div class="boxes">
+                <ul class="cp_list">
+                    <li>Book_ID</li>
+                    {{id}}
+                    <li>書籍名</li>
+                    {{getData.title}}<br>
+                    <li>著者</li>
+                    {{getData.author}}<br>
+                    <li>出版社</li>
+                    {{getData.publisher}}<br>
+                    <li>内容</li>
+                    {{getData.item_caption}}
+                </ul>
             <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              検索
+              次の書籍
             </button>
             <button v-on:click="addtagbook" class="btn btn--yellow btn--cubic">
               タグ追加
@@ -24,10 +33,6 @@
           </div>
           <div class="des2">
           <p>
-            書籍名：{{getData.title}}<br>
-            著者：{{getData.author}}<br>
-            出版社：{{getData.publisher}}<br>
-            内容：{{getData.content}}<br>
             タグ：
           </p>
           <div v-for="t in tag" :key="t">
@@ -105,27 +110,48 @@ export default {
       isbn: "",
       tags:tags,
       tag:[],
+      id: 0,
       getData:[],
 			tableData: [],
     };
   },
+  created: function () {
+    var params = new FormData();
+    params.append("isbn", "this.isbn");
+    this.tags = []
+    const response = axios
+        .post("/gettag", params)
+        .then((response) => {
+            for(var i in response.data.alltagname){
+                this.tags.push(response.data.alltagname[i]);
+            }
+            console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした");
+        });
+    },
   methods: {
     research: function () {
+      this.id = this.id + 1;
       var params = new FormData();
-      params.append("isbn", this.isbn);
+      params.append("id", this.id);
       const response = axios
-        .post("/bookinfo", params)
+        .post("/taged_book_info", params)
         .then((response) => {
           this.getData = {
-                    title:response.data.title,
-                    author:response.data.author,
-                    publisher:response.data.publisher,
-                }
+            title:response.data.title,
+            author:response.data.author,
+            publisher:response.data.publisher,
+            item_caption: response.data.item_caption,
+            imageurl: response.data.imageurl
+        }
           console.log(response.data);
         })
         .catch((error) => {
           alert("データを送信できませんでした");
         });
+        this.tag = []
     },
     catchtag(tagdata){
       this.tableData = []
@@ -142,7 +168,7 @@ export default {
     },
     addtagbook: function (){
         var params = new FormData();
-        params.append('isbn', this.isbn)
+        params.append('id', this.id)
       params.append('taglength', this.tag.length)
       this.tag.forEach((text, index) => {
         params.append('tag[' + index + ']', text);
