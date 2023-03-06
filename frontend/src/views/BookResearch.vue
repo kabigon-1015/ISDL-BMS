@@ -106,6 +106,22 @@ export default {
 			tableData: [],
     };
   },
+  created: function () {
+    var params = new FormData();
+    params.append("isbn", "this.isbn");
+    this.tags = []
+    const response = axios
+        .post("/gettag", params)
+        .then((response) => {
+            for(var i in response.data.alltagname){
+                this.tags.push(response.data.alltagname[i]);
+            }
+            console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした");
+        });
+    },
   mounted(){
     this.$store.dispatch("getcurrentpass", '/rental/BookResearch');
   },
