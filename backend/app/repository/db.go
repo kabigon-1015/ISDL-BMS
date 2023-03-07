@@ -200,7 +200,7 @@ func AddBookTag(tagid []string, id string){
 	fmt.Print(id)
 	fmt.Print(tagid)
 	fmt.Print(alltag)
-
+  
 	upd, err := db.Prepare("UPDATE Books SET tagid = ? WHERE id = ?")
     if err != nil {
         log.Fatal(err)
@@ -208,7 +208,7 @@ func AddBookTag(tagid []string, id string){
     upd.Exec(alltag, id)
 }
 
-func GetUserinfo(id string, password string) (string, string) {
+func VeryfyUser(id string, password string) (string, string) {
 	var student structure.Students
 
 	Opendb()
@@ -225,6 +225,76 @@ func GetUserinfo(id string, password string) (string, string) {
 	}
 
 	return student.Name, student.Email
+}
+
+func GetUserInfo(id string) ([][]string, [][]string) {
+	var rent_hist structure.Rent_hist
+	var book structure.Books
+	var renthist_books [][]string
+	var rented_books [][]string
+
+	Opendb()
+	defer db.Close()
+
+	//貸出履歴
+	rows_renthist, err := db.Query("SELECT id FROM Rent_hist WHERE renterid = ? AND returned = ?", id, "0")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_renthist.Next() {
+		rows_renthist.Scan(&rent_hist.Hist_id)
+		rows_rentbooks, err := db.Query("SELECT bookid FROM Rent_hist WHERE id = ?", rent_hist.Hist_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentbooks.Next() {
+			rows_rentbooks.Scan(&book.Book_id)
+		}
+
+		rows_rentbooktitle, err := db.Query("SELECT title, author, publisher FROM books WHERE id = ?", book.Book_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentbooktitle.Next() {
+			rows_rentbooktitle.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
+		}
+
+		book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
+		renthist_books = append(renthist_books, book_data)
+	}
+
+	//貸出中
+	rows_rented, err := db.Query("SELECT id FROM Rent_hist WHERE renterid = ? AND returned = ?", id, "1")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	for rows_rented.Next() {
+		rows_rented.Scan(&rent_hist.Hist_id)
+		rows_rentedbooks, err := db.Query("SELECT bookid FROM Rent_hist WHERE id = ?", rent_hist.Hist_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentedbooks.Next() {
+			rows_rentedbooks.Scan(&book.Book_id)
+		}
+
+		rows_rentedbooktitle, err := db.Query("SELECT title, author, publisher FROM books WHERE id = ?", book.Book_id)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		for rows_rentedbooktitle.Next() {
+			rows_rentedbooktitle.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher)
+		}
+
+		rented_book_data := []string{book.Book_title, book.Book_author, book.Book_publisher}
+		rented_books = append(rented_books, rented_book_data)
+	}
+
+	return renthist_books, rented_books
 }
 
 func Rentbook(id string, isbn string) string {
