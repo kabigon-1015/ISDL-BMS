@@ -42,7 +42,6 @@
 			</table>
         </section>
       </section>
-      <!-- {{ this.tag }} -->
     </div>
     <!--/#main-->
   </div>
@@ -107,6 +106,25 @@ export default {
 			tableData: [],
     };
   },
+  created: function () {
+    var params = new FormData();
+    params.append("isbn", "this.isbn");
+    this.tags = []
+    const response = axios
+        .post("/gettag", params)
+        .then((response) => {
+            for(var i in response.data.alltagname){
+                this.tags.push(response.data.alltagname[i]);
+            }
+            console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした");
+        });
+    },
+  mounted(){
+    this.$store.dispatch("getcurrentpass", '/rental/BookResearch');
+  },
   methods: {
     research: function () {
 
@@ -166,14 +184,10 @@ export default {
 </script>
 
 <style scoped>
-/* body {
-  font-family: "Open Sans", sans-serif;
-  line-height: 1.25;
-} */
 .tagbtn{
   width: 500px;
   height: 200px;
-  flex-wrap:wrap;/* これを指定する */
+  flex-wrap:wrap;
   
 }
 .rental{

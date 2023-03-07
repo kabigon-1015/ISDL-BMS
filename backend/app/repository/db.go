@@ -126,6 +126,19 @@ func GetTagid(tagname string) string {
 	return tag.Id
 }
 
+func SignUp(userid string,password string,username string,emailadress string){
+	Opendb()
+	defer db.Close()
+
+	insert, err := db.Prepare("INSERT INTO Students(id,name,password,email) VALUES(?, ?, ?, ?)")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// insert.Exec(2,"isbn","岡")
+	insert.Exec(userid,username,password,emailadress)
+}
+
 func FilterBooks(tagid []string) [][]string {
 	var book structure.Books
 	var Filter_book_data [][]string

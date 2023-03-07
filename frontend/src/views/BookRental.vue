@@ -69,6 +69,7 @@ export default {
       show:1,
     };
   },
+
   methods:{
     showpage:function(num){
       this.show=num

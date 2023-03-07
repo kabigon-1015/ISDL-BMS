@@ -3,7 +3,8 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     username:'ログイン',
-    userid:'null'
+    userid:'null',
+    currentpass:''
   },
   getters: {
   },
@@ -14,6 +15,9 @@ export default createStore({
     getuserid: function(state, value) {
       state.userid = value
     },
+    getcurrentpass: function(state, value) {
+      state.currentpass = value
+    },
   },
   actions: {
     loginusername: function(context, value) {
@@ -21,6 +25,9 @@ export default createStore({
     },
     getuserid: function(context, value) {
       context.commit('getuserid', value)
+    },
+    getcurrentpass: function(context, value) {
+      context.commit('getcurrentpass', value)
     },
   },
   modules: {
