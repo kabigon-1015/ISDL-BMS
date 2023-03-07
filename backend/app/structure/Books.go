@@ -9,7 +9,7 @@ type Books struct {
 	Book_author     string
 	Book_authorkana string
 	Book_publisher  string
-	Book_caption    string
+	Book_overview    string
 	Book_date       string
 	Book_imageurl   string
 }
