@@ -71,7 +71,7 @@ func Router(router *gin.Engine) {
 		id := c.PostForm("id")
 		password := c.PostForm("password")
 		fmt.Print(id)
-		name, email := repository.GetUserinfo(id, password)
+		name, email := repository.VeryfyUser(id, password)
 		fmt.Print(name, email)
 		if len(name) == 0 {
 			c.JSON(200, gin.H{})
@@ -89,13 +89,13 @@ func Router(router *gin.Engine) {
 		password := c.PostForm("password")
 		username := c.PostForm("username")
 		emailadress := c.PostForm("emailadress")
-		
-		repository.SignUp(userid,password,username,emailadress)
-		
-			c.JSON(200, gin.H{
-				"name":  username,
-				"id": userid,
-			})
+
+		repository.SignUp(userid, password, username, emailadress)
+
+		c.JSON(200, gin.H{
+			"name": username,
+			"id":   userid,
+		})
 	})
 
 	router.POST("/filterbook", func(c *gin.Context) {
@@ -110,9 +110,9 @@ func Router(router *gin.Engine) {
 		for i := 0; i < len; i++ {
 			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
-			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+			// fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 		}
-		fmt.Print(tagid)
+		// fmt.Print(tagid)
 		booklist_temp := repository.FilterBooks_ver2(tagid)
 
 		for _, v := range booklist_temp {
@@ -121,7 +121,7 @@ func Router(router *gin.Engine) {
 			publisher := v[2]
 			rentaluser_name := repository.GetRenterInfo(v[3])
 
-			fmt.Print(title, author, publisher, rentaluser_name, "\n")
+			// fmt.Print(title, author, publisher, rentaluser_name, "\n")
 
 			titlelist = append(titlelist, title)
 			authorlist = append(authorlist, author)
@@ -136,7 +136,7 @@ func Router(router *gin.Engine) {
 		})
 	})
 
-	router.POST("/addbooktag", func(c *gin.Context){
+	router.POST("/addbooktag", func(c *gin.Context) {
 		var tagid []string
 
 		isbn := c.PostForm("isbn")
@@ -150,6 +150,13 @@ func Router(router *gin.Engine) {
 		repository.AddBookTag(tagid, isbn)
 		c.JSON(200, gin.H{
 			"message": "success",
+		})
+	})
+
+	router.POST("/gettag", func(c *gin.Context) {
+		alltagname := repository.GetAllTag()
+		c.JSON(200, gin.H{
+			"alltagname": alltagname,
 		})
 	})
 
@@ -236,6 +243,22 @@ func Router(router *gin.Engine) {
 		// fmt.Print(booktitle)
 
 		bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetBookDetail(booktitle)
+
+		c.JSON(200, gin.H{
+			"title":        booktitle,
+			"author":       bookauthor,
+			"publisher":    bookpublisher,
+			"item_caption": bookitem_caption,
+			"imageurl":     bookimageurl,
+		})
+	})
+
+	router.POST("/taged_book_info", func(c *gin.Context) {
+
+		id := c.PostForm("id")
+		// fmt.Print(booktitle)
+
+		booktitle, bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetTagedBookInfo(id)
 
 		c.JSON(200, gin.H{
 			"title":        booktitle,
