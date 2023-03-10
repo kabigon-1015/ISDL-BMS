@@ -39,8 +39,8 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	repository.CreateTask_tag()
-	repository.CreateTask2()
+	// repository.CreateTask_tag()
+	// repository.CreateTask2()
 	//repository.InsertBooks()
 	router.GET("/", func(c *gin.Context) {
 
@@ -71,7 +71,7 @@ func Router(router *gin.Engine) {
 		id := c.PostForm("id")
 		password := c.PostForm("password")
 		fmt.Print(id)
-		name, email := repository.GetUserinfo(id, password)
+		name, email := repository.VeryfyUser(id, password)
 		fmt.Print(name, email)
 		if len(name) == 0 {
 			c.JSON(200, gin.H{})
@@ -89,13 +89,13 @@ func Router(router *gin.Engine) {
 		password := c.PostForm("password")
 		username := c.PostForm("username")
 		emailadress := c.PostForm("emailadress")
-		
-		repository.SignUp(userid,password,username,emailadress)
-		
-			c.JSON(200, gin.H{
-				"name":  username,
-				"id": userid,
-			})
+
+		repository.SignUp(userid, password, username, emailadress)
+
+		c.JSON(200, gin.H{
+			"name": username,
+			"id":   userid,
+		})
 	})
 
 	router.POST("/filterbook", func(c *gin.Context) {
@@ -110,9 +110,9 @@ func Router(router *gin.Engine) {
 		for i := 0; i < len; i++ {
 			// tag := append(tags, c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
-			fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
+			// fmt.Print(c.PostForm("tag[" + strconv.Itoa(i) + "]"))
 		}
-		fmt.Print(tagid)
+		// fmt.Print(tagid)
 		booklist_temp := repository.FilterBooks_ver2(tagid)
 
 		for _, v := range booklist_temp {
@@ -121,7 +121,7 @@ func Router(router *gin.Engine) {
 			publisher := v[2]
 			rentaluser_name := repository.GetRenterInfo(v[3])
 
-			fmt.Print(title, author, publisher, rentaluser_name, "\n")
+			// fmt.Print(title, author, publisher, rentaluser_name, "\n")
 
 			titlelist = append(titlelist, title)
 			authorlist = append(authorlist, author)
@@ -136,10 +136,10 @@ func Router(router *gin.Engine) {
 		})
 	})
 
-	router.POST("/addbooktag", func(c *gin.Context){
+	router.POST("/addbooktag", func(c *gin.Context) {
 		var tagid []string
 
-		isbn := c.PostForm("isbn")
+		id := c.PostForm("id")
 		_len := c.PostForm("taglength")
 		len, _ := strconv.Atoi(_len)
 		for i := 0; i < len; i++ {
@@ -147,9 +147,16 @@ func Router(router *gin.Engine) {
 			tagid = append(tagid, repository.GetTagid(c.PostForm("tag["+strconv.Itoa(i)+"]")))
 		}
 
-		repository.AddBookTag(tagid, isbn)
+		repository.AddBookTag(tagid, id)
 		c.JSON(200, gin.H{
 			"message": "success",
+		})
+	})
+
+	router.POST("/gettag", func(c *gin.Context) {
+		alltagname := repository.GetAllTag()
+		c.JSON(200, gin.H{
+			"alltagname": alltagname,
 		})
 	})
 
@@ -243,6 +250,66 @@ func Router(router *gin.Engine) {
 			"publisher":    bookpublisher,
 			"item_caption": bookitem_caption,
 			"imageurl":     bookimageurl,
+		})
+	})
+
+	router.POST("/taged_book_info", func(c *gin.Context) {
+
+		id := c.PostForm("id")
+		// fmt.Print(booktitle)
+
+		booktitle, bookauthor, bookpublisher, bookitem_caption, bookimageurl := repository.GetTagedBookInfo(id)
+
+		c.JSON(200, gin.H{
+			"title":        booktitle,
+			"author":       bookauthor,
+			"publisher":    bookpublisher,
+			"item_caption": bookitem_caption,
+			"imageurl":     bookimageurl,
+		})
+	})
+
+	router.POST("/userinfo", func(c *gin.Context) {
+		var hist_titlelist []string
+		var hist_authorlist []string
+		var hist_publisherlist []string
+		var rented_titlelist []string
+		var rented_authorlist []string
+		var rented_publisherlist []string
+
+		userid := c.PostForm("user_id")
+
+		renthist_books, rented_books := repository.GetUserInfo(userid)
+
+		for _, v := range renthist_books {
+			hist_title := v[0]
+			hist_author := v[1]
+			hist_publisher := v[2]
+
+			// fmt.Print(hist_title, hist_author, hist_publisher, "\n")
+
+			hist_titlelist = append(hist_titlelist, hist_title)
+			hist_authorlist = append(hist_authorlist, hist_author)
+			hist_publisherlist = append(hist_publisherlist, hist_publisher)
+		}
+		for _, v := range rented_books {
+			rented_title := v[0]
+			rented_author := v[1]
+			rented_publisher := v[2]
+
+			fmt.Print(rented_title, rented_author, rented_publisher, "\n")
+
+			rented_titlelist = append(rented_titlelist, rented_title)
+			rented_authorlist = append(rented_authorlist, rented_author)
+			rented_publisherlist = append(rented_publisherlist, rented_publisher)
+		}
+		c.JSON(200, gin.H{
+			"title":            hist_titlelist,
+			"author":           hist_authorlist,
+			"publisher":        hist_publisherlist,
+			"rented_title":     rented_titlelist,
+			"rented_author":    rented_authorlist,
+			"rented_publisher": rented_publisherlist,
 		})
 	})
 }
