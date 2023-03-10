@@ -49,6 +49,8 @@ func CreateTask_tag() {
 	}
 	// insert.Exec(2,"isbn","岡")
 	insert.Exec("1", "機械学習")
+	insert.Exec("2", "GAN")
+	insert.Exec("3", "LSTM")
 }
 
 func CreateTask2() {
@@ -56,7 +58,7 @@ func CreateTask2() {
 	Opendb()
 	defer db.Close()
 
-	insert, err := db.Prepare("INSERT INTO Books(id,title,title_kana,tagid,ISBN,author,author_kana,publisher,overview,image_url) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	insert, err := db.Prepare("INSERT INTO Books(id,title,title_kana,tagid,ISBN,author,author_kana,publisher,item_caption,image_url) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
 	if err != nil {
 		log.Fatal(err.Error())
@@ -124,19 +126,25 @@ func GetTagid(tagname string) string {
 	return tag.Id
 }
 
-func GetAllTag() []string {
+func GetAllTag() []string{
 	var tag structure.Tags
 	var alltagname []string
 
+		} else {
+			book_sql += book_sql + " AND tagid LIKE CONCAT(?, '%')"
+		}
+		new_tagid = append(new_tagid, Partitionid(id))
+	}
+	// fmt.Print(sql)
 	Opendb()
 	defer db.Close()
 
-	rows_title, err := db.Query("SELECT tagname FROM Tags")
+	rows_all, err := db.Query(book_sql, new_tagid...)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
+	
 	for rows_title.Next() {
 		rows_title.Scan(&tag.TagName)
 		alltagname = append(alltagname, tag.TagName)
@@ -145,7 +153,7 @@ func GetAllTag() []string {
 	return alltagname
 }
 
-func SignUp(userid string, password string, username string, emailadress string) {
+func SignUp(userid string,password string,username string,emailadress string){
 	Opendb()
 	defer db.Close()
 
@@ -155,7 +163,7 @@ func SignUp(userid string, password string, username string, emailadress string)
 		log.Fatal(err.Error())
 	}
 	// insert.Exec(2,"isbn","岡")
-	insert.Exec(userid, username, password, emailadress)
+	insert.Exec(userid,username,password,emailadress)
 }
 
 func FilterBooks_ver2(tagid []string) [][]string {
@@ -175,6 +183,7 @@ func FilterBooks_ver2(tagid []string) [][]string {
 		rows_all.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_id, &book.Book_tagid)
 		Filter := true
 		for _, t := range tagid {
+			fmt.Print(t)
 			if !strings.Contains(book.Book_tagid, Partitionid(t)) {
 				Filter = false
 				break
@@ -188,7 +197,7 @@ func FilterBooks_ver2(tagid []string) [][]string {
 	return Filter_book_data
 }
 
-func AddBookTag(tagid []string, id string) {
+func AddBookTag(tagid []string, id string){
 	var alltag string
 
 	Opendb()
@@ -197,15 +206,15 @@ func AddBookTag(tagid []string, id string) {
 	for _, t := range tagid {
 		alltag = alltag + Partitionid(t)
 	}
-	fmt.Print(id)
+	fmt.Print(isbn)
 	fmt.Print(tagid)
 	fmt.Print(alltag)
 
 	upd, err := db.Prepare("UPDATE Books SET tagid = ? WHERE id = ?")
-	if err != nil {
-		log.Fatal(err)
-	}
-	upd.Exec(alltag, id)
+    if err != nil {
+        log.Fatal(err)
+    }
+    upd.Exec(alltag, id)
 }
 
 func VeryfyUser(id string, password string) (string, string) {
@@ -437,32 +446,14 @@ func GetBookDetail(title string) (string, string, string, string) {
 	Opendb()
 	defer db.Close()
 
-	rows_detail, err := db.Query("SELECT author, publisher, overview, image_url from Books where title=?", title)
+	rows_detail, err := db.Query("SELECT author, publisher, item_caption, image_url from Books where title=?", title)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	for rows_detail.Next() {
-		rows_detail.Scan(&book.Book_author, &book.Book_publisher, &book.Book_overview, &book.Book_imageurl)
+		rows_detail.Scan(&book.Book_author, &book.Book_publisher, &book.Book_caption, &book.Book_imageurl)
 	}
 
-	return book.Book_author, book.Book_publisher, book.Book_overview, book.Book_imageurl
-}
-
-func GetTagedBookInfo(id string) (string, string, string, string, string) {
-	var book structure.Books
-
-	Opendb()
-	defer db.Close()
-
-	rows_detail, err := db.Query("SELECT title, author, publisher, overview, image_url from Books where id=?", id)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	for rows_detail.Next() {
-		rows_detail.Scan(&book.Book_title, &book.Book_author, &book.Book_publisher, &book.Book_overview, &book.Book_imageurl)
-	}
-
-	return book.Book_title, book.Book_author, book.Book_publisher, book.Book_overview, book.Book_imageurl
+	return book.Book_author, book.Book_publisher, book.Book_caption, book.Book_imageurl
 }

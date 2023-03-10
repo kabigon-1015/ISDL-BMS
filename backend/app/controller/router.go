@@ -39,8 +39,8 @@ func Router(router *gin.Engine) {
 	//session
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
-	// repository.CreateTask_tag()
-	// repository.CreateTask2()
+	//repository.CreateTask_tag()
+	//repository.CreateTask2()
 	//repository.InsertBooks()
 	router.GET("/", func(c *gin.Context) {
 
@@ -268,7 +268,6 @@ func Router(router *gin.Engine) {
 			"imageurl":     bookimageurl,
 		})
 	})
-
 	router.POST("/userinfo", func(c *gin.Context) {
 		var hist_titlelist []string
 		var hist_authorlist []string
