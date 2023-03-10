@@ -152,8 +152,8 @@ func Router(router *gin.Engine) {
 			"message": "success",
 		})
 	})
-  
-	router.POST("/gettag", func(c *gin.Context){
+
+	router.POST("/gettag", func(c *gin.Context) {
 		alltagname := repository.GetAllTag()
 		c.JSON(200, gin.H{
 			"alltagname": alltagname,
@@ -268,7 +268,7 @@ func Router(router *gin.Engine) {
 			"imageurl":     bookimageurl,
 		})
 	})
-  router.POST("/userinfo", func(c *gin.Context) {
+	router.POST("/userinfo", func(c *gin.Context) {
 		var hist_titlelist []string
 		var hist_authorlist []string
 		var hist_publisherlist []string
@@ -309,6 +309,6 @@ func Router(router *gin.Engine) {
 			"rented_title":     rented_titlelist,
 			"rented_author":    rented_authorlist,
 			"rented_publisher": rented_publisherlist,
-      })
+		})
 	})
 }

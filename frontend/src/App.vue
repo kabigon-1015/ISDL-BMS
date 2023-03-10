@@ -29,7 +29,7 @@ export default {
     }
   },
   mounted(){
-    this.$store.dispatch("getcurrentpass", '/');
+    
   },
   methods: {
     

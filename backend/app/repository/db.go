@@ -124,7 +124,7 @@ func GetTagid(tagname string) string {
 	return tag.Id
 }
 
-func GetAllTag() []string{
+func GetAllTag() []string {
 	var tag structure.Tags
 	var alltagname []string
 
@@ -136,7 +136,7 @@ func GetAllTag() []string{
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	
+
 	for rows_title.Next() {
 		rows_title.Scan(&tag.TagName)
 		alltagname = append(alltagname, tag.TagName)
@@ -145,7 +145,7 @@ func GetAllTag() []string{
 	return alltagname
 }
 
-func SignUp(userid string,password string,username string,emailadress string){
+func SignUp(userid string, password string, username string, emailadress string) {
 	Opendb()
 	defer db.Close()
 
@@ -155,7 +155,7 @@ func SignUp(userid string,password string,username string,emailadress string){
 		log.Fatal(err.Error())
 	}
 	// insert.Exec(2,"isbn","岡")
-	insert.Exec(userid,username,password,emailadress)
+	insert.Exec(userid, username, password, emailadress)
 }
 
 func FilterBooks_ver2(tagid []string) [][]string {
@@ -188,7 +188,7 @@ func FilterBooks_ver2(tagid []string) [][]string {
 	return Filter_book_data
 }
 
-func AddBookTag(tagid []string, id string){
+func AddBookTag(tagid []string, id string) {
 	var alltag string
 
 	Opendb()
@@ -200,12 +200,12 @@ func AddBookTag(tagid []string, id string){
 	fmt.Print(id)
 	fmt.Print(tagid)
 	fmt.Print(alltag)
-  
+
 	upd, err := db.Prepare("UPDATE Books SET tagid = ? WHERE id = ?")
-    if err != nil {
-        log.Fatal(err)
-    }
-    upd.Exec(alltag, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	upd.Exec(alltag, id)
 }
 
 func VeryfyUser(id string, password string) (string, string) {
