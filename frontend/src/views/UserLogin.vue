@@ -72,6 +72,7 @@ export default {
           } else {
             this.$store.dispatch("loginusername", response.data.name);
             this.$store.dispatch("getuserid", this.id);
+            this.$store.dispatch("getuseremail", response.data.email);
           }
         })
         .catch((error) => {

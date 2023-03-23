@@ -4,7 +4,8 @@ export default createStore({
   state: {
     username:'ログイン',
     userid:'null',
-    currentpass:''
+    currentpass:'',
+    useremail:''
   },
   getters: {
   },
@@ -18,6 +19,9 @@ export default createStore({
     getcurrentpass: function(state, value) {
       state.currentpass = value
     },
+    getuseremail: function(state, value) {
+      state.useremail = value
+    },
   },
   actions: {
     loginusername: function(context, value) {
@@ -28,6 +32,9 @@ export default createStore({
     },
     getcurrentpass: function(context, value) {
       context.commit('getcurrentpass', value)
+    },
+    getuseremail: function(context, value) {
+      context.commit('getuseremail', value)
     },
   },
   modules: {
