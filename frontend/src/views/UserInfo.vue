@@ -4,9 +4,18 @@
       <section id="pagetop">
         <section class="box">
             <h2 class="title">User Info<span>ユーザー情報</span></h2>
-          <div>
-            <h4>貸出中</h4>
-			<table class="rentedtable">
+            <h3>
+              <div class=ntitle>名前:</div>
+              <div class=user>{{this.$store.state.username}}</div>
+              <div class=ntitle>email:</div>
+              <div class=user>{{this.$store.state.useremail}}</div>
+            </h3>
+      <div class=rent>
+      <h3>
+        <div class=rentedtitle>貸出中</div>
+        <div class=hist>貸出履歴</div>
+      </h3>
+			<table class="rentedtable" align="left">
 				<thead>
 					<tr>
 						<th class=title>タイトル</th>
@@ -22,9 +31,8 @@
 					</tr>
 				</tbody>
 			</table>
-          </div>
-          <div class=hist>
-            <h4>貸出履歴</h4>
+          <!-- <div class=hist> -->
+            <!-- <h3>貸出履歴</h3> -->
             <table class="histtable">
                 <thead>
                     <tr>
@@ -41,6 +49,7 @@
                     </tr>
                 </tbody>
             </table>
+          <!-- </div> -->
           </div>
         </section>
       </section>
@@ -119,32 +128,52 @@ export default {
 </script>
 
 <style scoped>
+.ntitle, .rentedtitle, .hist{
+  /* margin-bottom: 1px;	見出しの下に空けるスペース */
+	font-size: 24px;		/*文字サイズ*/
+	letter-spacing: 0.2em;	/*文字間隔を少し広くとる設定*/
+	color: #c1bc9e;
+  float: left;
+}
+.user{
+  /* margin-bottom:0%;	 見出しの下に空けるスペース */
+	font-size: 24px;		/*文字サイズ*/
+	letter-spacing: 0.2em;
+  color: white;
+  float: left;
+  margin-right: 20%;
+}
 .hist{
-    margin-top: 100px;
+    /* margin-top: 200px; */
+   margin-left: 45%;
+}
+.histtable{
+  float: left;
+  margin-left: 38%;
 }
 table {
   position: absolute;
   /* table-layout: fixed; */
   /* top: 130px; */
-  size: 200px;
+  size: 100px;
   border-collapse: collapse;
   border-spacing: 5px;
   margin: 0 auto;
   padding: 0;
-  width: 70%;
+  width: 33%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 table tr {
 	height: 20px;
 }
 /* thead */
 thead th {
-	font-size: 12px;
+	font-size: 10px;
 	/* width: 300px; */
 	text-align: center;
-	padding: 8px;
+	padding: 6px;
 	/* color */
 	color: white;
 	background-color:#b3ae92;
@@ -169,18 +198,15 @@ thead{
 tbody {
   display: block;
   overflow-y: scroll;
-  height: 380px;
+  height: 250px;
 }
 .title{
-  min-width: 250px;
+  min-width: 200px;
 }
 .author{
-  min-width: 250px;
+  min-width: 100px;
 }
 .publisher{
-  min-width: 250px;
-}
-.status{
   width: 99999px;
 }
 tbody td {

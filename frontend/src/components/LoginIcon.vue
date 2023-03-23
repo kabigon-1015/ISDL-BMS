@@ -1,9 +1,16 @@
 <template>
   <div class="user">
     <img src="../assets/images/usericon.png" />
+  <div v-if="this.$store.state.username=='ログイン'">
     <router-link to="/userlogin"
-      ><p>{{ this.$store.state.username }}</p></router-link
-    >
+      ><p>{{ this.$store.state.username }}</p>
+    </router-link>
+  </div>
+  <div v-else>
+    <router-link to="/userinfo"
+      ><p>{{ this.$store.state.username }}</p>
+    </router-link>
+  </div>
   </div>
 </template>
 
