@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"log"
+	"encoding/json"
+	"io/ioutil"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -151,6 +154,39 @@ func Router(router *gin.Engine) {
 		c.JSON(200, gin.H{
 			"message": "success",
 		})
+	})
+
+	router.POST("/addbook", func(c *gin.Context) {
+
+		input_isbn := c.PostForm("isbn")
+		response, err := http.Get("https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?applicationId=1034656449367615318&isbn="+ input_isbn)
+		
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		body, err := ioutil.ReadAll(response.Body)
+		// book, _ := json.Marshal(response.Body)
+		// fmt.Println(response.Body)
+		var result interface{} 
+  		json.Unmarshal(body, &result) 
+		title := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["title"]
+		isbn := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["isbn"]
+		author := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["author"]
+		author_kana := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["authorKana"]
+		publisher := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["publisherName"]
+		overview := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["itemCaption"]
+		image_url := result.(map[string]interface{})["Items"].([]interface{})[0].(map[string]interface{})["Item"].(map[string]interface{})["largeImageUrl"]
+		
+		repository.AddBook(title,isbn,author,author_kana,publisher,overview,image_url)
+		c.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
+
+	router.POST("/deletebook", func(c *gin.Context) {
+		input_isbn := c.PostForm("isbn")
+		repository.DeleteBook(input_isbn)
+
 	})
 
 	router.POST("/gettag", func(c *gin.Context) {

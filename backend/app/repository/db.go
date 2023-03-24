@@ -466,3 +466,31 @@ func GetTagedBookInfo(id string) (string, string, string, string, string) {
 
 	return book.Book_title, book.Book_author, book.Book_publisher, book.Book_overview, book.Book_imageurl
 }
+
+func AddBook(title interface{},isbn interface{},author interface{},author_kana interface{},publisher interface{},overview interface{},image_url interface{}){
+
+	Opendb()
+	defer db.Close()
+
+	insert, err := db.Prepare("INSERT INTO Books(title,isbn,author,author_kana,publisher,overview,image_url) VALUES(?, ?, ?, ?, ?, ?, ?)")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	insert.Exec(title,isbn,author,author_kana,publisher,overview,image_url)
+}
+
+func DeleteBook(isbn string){
+	fmt.Print(isbn)
+	Opendb()
+	defer db.Close()
+
+	delete, err := db.Prepare("DELETE FROM Books WHERE isbn = ?")
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	delete.Exec(isbn)
+}
