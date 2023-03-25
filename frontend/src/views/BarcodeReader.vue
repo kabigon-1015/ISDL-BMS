@@ -6,96 +6,108 @@
           <h2 class="title">Rental<span>貸出</span></h2>
           <div>
             <h2>書籍のISBNをバーコードリーダーで読み取って下さい</h2>
+
             <div class="cp_iptxt">
-              <input class="ef" type="text" v-model="isbn" placeholder="" />
+              <input class="ef" type="text" v-model="isbn_return" @change="bookrental" placeholder="" />
               <label>ISBN</label>
               <span class="focus_line"><i></i></span>
             </div>
-            <button v-on:click="research" class="btn btn--yellow btn--cubic">
-              借りる
-            </button>
-          </div>
-          <div class="des1">
-          <img :src="book.image_url" class="image">
-          </div>
-          <div class="des2">
-          <p>
-            書籍名：{{book.title}}<br>
-            著者：{{book.author}}<br>
-            出版社：{{book.publisher}}<br>
-            内容：{{book.content}}
-          </p>
+            <button variant="secondary" class="btn btn--yellow btn--cubic" v-on:click="sendrental">送信</button>
+			<table class="returntable">
+				<thead>
+					<tr>
+						<th>タイトル</th>
+						<th>著者</th>
+						<th>出版社</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(book, index) in returnbooks" :key="index">
+						<td>{{ book.title }}</td>
+						<td>{{ book.author }}</td>
+						<td>{{ book.publisher }}</td>
+					</tr>
+				</tbody>
+			</table>
           </div>
         </section>
       </section>
     </div>
     <!--/#main-->
   </div>
-  <!--/#contents-->
 </template>
 
 <script>
-import axios from "axios";
-const book=
-  {
-    title:"python",
-    author:"oka",
-    publisher:"hayato",
-    image_url:"https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/0247/9784839960247.jpg?_ex=200x200",
-    content:"pythonの教科書です"
-  };
-
-
+import axios from 'axios'
+const URL = '/'
 export default {
-  data: function () {
-    return {
-      isbn: "",
-      book:book
-    };
-  },
-  mounted(){
-    this.$store.dispatch("getcurrentpass", '/rental/BarcodeReader');
-  },
-  methods: {
-    research: function () {
-      var params = new FormData();
-      params.append("isbn", this.isbn);
-      axios
-        .post("/research", params)
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          alert("データを送信できませんでした．");
-        });
-    },
-  },
-};
+	name: 'BookReturn',
+		data() {
+			return {
+			checked:false,
+			isbn_return:"",
+			returnbooks:[],
+			returnisbn:[],
+			sendisbn:[],
+			bookinfo:[{
+				title:"aaa",
+				author:"bbb",
+				publisher:"ccc",
+				state:'貸出中',
+				isbn:1
+			}
+			],
+			getData:[],
+			tableData: [],
+			isbn:'',
+			keyword:'',
+		}
+	},
+	methods: {
+		bookrental:function () {
+			var params = new FormData()
+			params.append("isbn", this.isbn_return)
+			this.isbn = this.isbn_return
+			axios.post(`${URL}bookinfo`, params)
+			.then(response => {
+				this.getData = {
+					title: response.data.title,
+					author: response.data.author,
+					publisher: response.data.publisher,
+					isbn: this.isbn
+				}
+				// 表に追加
+				this.returnbooks.push({
+					title: String(this.getData.title),
+					author:String(this.getData.author),
+					publisher:String(this.getData.publisher),
+				});
+				this.sendisbn.push(this.getData.isbn)
+			})
+			this.isbn_return='';
+		},
+		sendrental:function(){
+			var params = new FormData()
+			params.append('user_id', this.$store.state.userid)
+			params.append('isbn', this.sendisbn)
+			this.sendisbn = []
+			console.log(params['isbn'])
+			axios.post(`${URL}rental_register`, params)
+			.then(response => {
+				alert(response.data['message'])
+				console.log(response.data)
+			})
+			.catch(error => {
+				alert('データを送信できませんでした．')
+				alert(error)
+			})
+			this.returnbooks.splice(0)
+		},
+	}
+}
 </script>
 
 <style scoped>
-.des1{
-  
-  display: inline-block;
-  position: absolute;
-  left:20%;
-  top:60%;
-}
-.des2{
-  
-  display: inline-block;
-  position: absolute;
-  margin-right: 15%;
-  top:60%;
-  left:35%;
-}
-.des2 p{
-  font-size:20px;
-}
-.image{
-  left:5%;
-  bottom:10%;
-}
 .cp_iptxt {
   display: inline-block;
   position: relative;
@@ -167,17 +179,21 @@ export default {
   transition: 0.6s;
 }
 .ef ~ label {
+  z-index: -1;
+  opacity: 0;
   position: absolute;
   font-size: 20px;
   top: 4px;
   left: 14px;
-  width: 5%;
+  width: 50%;
   transition: 0.3s;
   letter-spacing: 0.5px;
-  color: #040404;
+  color: #b2adad;
 }
 .ef:focus ~ label,
 .cp_iptxt.ef ~ label {
+  z-index: 0;
+  opacity: 1;
   font-size: 25px;
   top: -40px;
   left: 0;
@@ -234,5 +250,53 @@ button.btn--yellow:hover {
   color: #000;
   background: #00d0ff;
   border-bottom: 2px solid #0096cc;
+}
+table {
+  position: absolute;
+  table-layout: fixed;
+  /* top: 130px; */
+  size: 200px;
+  border-collapse: collapse;
+  border-spacing: 5px;
+  margin: 0 auto;
+  padding: 0;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+table tr {
+	height: 20px;
+}
+/* thead */
+thead th {
+	font-size: 12px;
+	/* width: 100px; */
+	text-align: center;
+	padding: 8px 0;
+	/* color */
+	color: white;
+	background-color:#b3ae92;
+	border-top: 1px solid #a2a7af;
+	border-left: 1px solid #a2a7af;
+	border-right: 1px solid #a2a7af;
+	border-bottom:3px solid #a2a7af;
+}
+/* tbody */
+tbody {
+	overflow-y: scroll;
+}
+.tbody::-webkit-scrollbar {  /* Chrome, Safari 対応 */
+        display:none;
+    }
+tbody td {
+	/* width: 30%; */
+	text-align: center;
+	padding: 8px;
+	/* color */
+	color: black;
+	background-color: #e0dada;
+	border-bottom: 1px solid #a2a7af;
+	border-left:1px solid #a2a7af;
+	border-right:1px solid #a2a7af;
 }
 </style>

@@ -3,31 +3,53 @@
     <div id="main">
       <section id="pagetop">
         <section class="box">
-            <h2 class="title">Book List<span>書籍一覧</span></h2>
-          <div>
-            <div class="boxes">
-          <input type="checkbox" id="box-1" v-model="checked" name="checkbox01">
-          <label for="box-1">貸出可能</label>
-        </div>
-			<table class="returntable">
+            <h2 class="title">User Info<span>ユーザー情報</span></h2>
+            <h3>
+              <div class=ntitle>名前:</div>
+              <div class=user>{{this.$store.state.username}}</div>
+              <div class=ntitle>email:</div>
+              <div class=user>{{this.$store.state.useremail}}</div>
+            </h3>
+      <div class=rent>
+      <h3>
+        <div class=rentedtitle>貸出中</div>
+        <div class=hist>貸出履歴</div>
+      </h3>
+			<table class="rentedtable" align="left">
 				<thead>
 					<tr>
 						<th class=title>タイトル</th>
 						<th class=author>著者</th>
 						<th class=publisher>出版社</th>
-						<th class=status>貸出状況</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="tableData in filteredbooks" :key="tableData.name">
-						<td class=title><router-link :to="{name:'detail',query:{title:tableData.title}}" v-text="tableData.title"></router-link></td>
-						<td class=author v-text="tableData.author"></td>
-						<td class=publisher v-text="tableData.publisher"></td>
-						<td class=status v-if="tableData.state=='null'"><button variant="secondary" class="btn btn--yellow btn--cubic" v-on:click="sendrental(tableData.isbn)">借りる</button></td>
-						<td class=status v-else v-text="tableData.state"></td>
+					<tr v-for="rented_tableData in rented_tableData" :key="rented_tableData.name">
+						<td class=title><router-link :to="{name:'detail',query:{title:rented_tableData.title}}" v-text="rented_tableData.title"></router-link></td>
+						<td class=author v-text="rented_tableData.author"></td>
+						<td class=publisher v-text="rented_tableData.publisher"></td>
 					</tr>
 				</tbody>
 			</table>
+          <!-- <div class=hist> -->
+            <!-- <h3>貸出履歴</h3> -->
+            <table class="histtable">
+                <thead>
+                    <tr>
+                        <th class=title>タイトル</th>
+                        <th class=author>著者</th>
+                        <th class=publisher>出版社</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="hist_tableData in hist_tableData" :key="hist_tableData.name">
+                        <td class=title><router-link :to="{name:'detail',query:{title:hist_tableData.title}}" v-text="hist_tableData.title"></router-link></td>
+                        <td class=author v-text="hist_tableData.author"></td>
+                        <td class=publisher v-text="hist_tableData.publisher"></td>
+                    </tr>
+                </tbody>
+            </table>
+          <!-- </div> -->
           </div>
         </section>
       </section>
@@ -56,138 +78,102 @@ export default {
 				isbn:1
 			}
 			],
-			getData:[],
-			tableData: [],
+			hist_getData:[],
+			hist_tableData: [],
+            rented_getData:[],
+			rented_tableData: [],
 			isbn:'',
 			keyword:'',
 		}
 	},
 	created: function() {
-		axios.post(`${URL}book_list`)
+    var params = new FormData()
+    params.append('user_id', this.$store.state.userid)
+		axios.post(`${URL}userinfo`, params)
 		.then(response => {
 			// alert(response.status)
-			console.log(response.data.isbn)
 			for(var i in response.data.title){
-                console.log(i)
-                this.getData = {
-                    title:response.data.title[i],
-					isbn:response.data.isbn[i],
-                    author:response.data.author[i],
-                    publisher:response.data.publisher[i],
-                    state: String(response.data.rentaluser_name[i])
-                }
-                console.log(response.data)
-                // if(this.getData.state == "null") {
-                //     this.getData.state = '貸出可能'
-                // }
-                this.tableData.push(this.getData)
-            }
+          console.log(i)
+          this.hist_getData = {
+            title:response.data.title[i],
+            author:response.data.author[i],
+            publisher:response.data.publisher[i]
+          }
+          console.log(response.data)
+          // if(this.getData.state == "null") {
+          //     this.getData.state = '貸出可能'
+          // }
+          this.hist_tableData.push(this.hist_getData)
+      }
+      for(var j in response.data.rented_title){
+          console.log(j)
+          this.rented_getData = {
+            title:response.data.rented_title[j],
+            author:response.data.rented_author[j],
+            publisher:response.data.rented_publisher[j]
+          }
+          console.log(response.data)
+          // if(this.getData.state == "null") {
+          //     this.getData.state = '貸出可能'
+          // }
+          this.rented_tableData.push(this.rented_getData)
+      }
 		})
 		.catch(error => {
 			alert('データを送信できませんでした．')
 			// alert(error)
 		})
-	},
-	methods:{
-		sendrental(isbn){
-			var params = new FormData()
-			params.append('user_id', this.$store.state.userid)
-			params.append('isbn', isbn)
-			this.sendisbn = []
-			console.log(params['isbn'])
-			axios.post(`${URL}rental_register`, params)
-			.then(response => {
-				alert(response.data['message'])
-				axios.post(`${URL}book_list`)
-				.then(response => {
-					// alert(response.status)
-					// console.log(response.data)
-					this.tableData=[]
-					for(var i in response.data.title){
-						console.log(i)
-						this.getData = {
-							title:response.data.title[i],
-							isbn:response.data.isbn[i],
-							author:response.data.author[i],
-							publisher:response.data.publisher[i],
-							state: String(response.data.rentaluser_name[i])
-						}
-						console.log(response.data)
-						// if(this.getData.state == "null") {
-						// 	this.getData.state = '貸出可能'
-						// }
-						this.tableData.push(this.getData)
-					}	
-				})
-				.catch(error => {
-					alert('データを送信できませんでした．')
-					console.log(error)
-					// alert(error)
-				})
-				console.log(response.data)
-			})
-			.catch(error => {
-				alert('データを送信できませんでした．')
-				alert(error)
-			})
-			this.returnbooks.splice(0)
-		},
-	},
-	computed: {	
-		filteredbooks: function() {
-			var tableData = [];
-			var books=[];
-			var book;
-			for(var j in this.tableData){
-				book=this.tableData[j];
-				if(this.checked==true){
-					if(book.state=='null'){
-						// book.state = '貸出可能'
-						books.push(book);
-						// console.log(book)
-					}
-				}
-				else{
-					books.push(book);
-					// console.log(book)
-				}
-			}
-			
-			for(var i in books) {
-				book = books[i];
-				if(book.title.indexOf(this.keyword) !== -1 ) {
-					tableData.push(book);
-				}
-			}
-			return tableData;
-		},
 	}
 }
 </script>
 
 <style scoped>
+.ntitle, .rentedtitle, .hist{
+  /* margin-bottom: 1px;	見出しの下に空けるスペース */
+	font-size: 24px;		/*文字サイズ*/
+	letter-spacing: 0.2em;	/*文字間隔を少し広くとる設定*/
+	color: #c1bc9e;
+  float: left;
+}
+.user{
+  /* margin-bottom:0%;	 見出しの下に空けるスペース */
+	font-size: 24px;		/*文字サイズ*/
+	letter-spacing: 0.2em;
+  color: white;
+  float: left;
+  margin-right: 20%;
+}
+.hist{
+    /* margin-top: 200px; */
+   margin-left: 45%;
+}
+.histtable{
+  float: left;
+  margin-left: 38%;
+}
 table {
   position: absolute;
   /* table-layout: fixed; */
   /* top: 130px; */
-  size: 200px;
+  size: 100px;
   border-collapse: collapse;
   border-spacing: 5px;
   margin: 0 auto;
   padding: 0;
-  width: 70%;
+  width: 33%;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 20px;
 }
 table tr {
 	height: 20px;
 }
 /* thead */
 thead th {
-	font-size: 12px;
+	font-size: 10px;
 	/* width: 300px; */
 	text-align: center;
-	padding: 8px;
+	padding: 6px;
 	/* color */
 	color: white;
 	background-color:#b3ae92;
@@ -212,18 +198,15 @@ thead{
 tbody {
   display: block;
   overflow-y: scroll;
-  height: 380px;
+  height: 250px;
 }
 .title{
-  min-width: 250px;
+  min-width: 200px;
 }
 .author{
-  min-width: 250px;
+  min-width: 100px;
 }
 .publisher{
-  min-width: 250px;
-}
-.status{
   width: 99999px;
 }
 tbody td {
