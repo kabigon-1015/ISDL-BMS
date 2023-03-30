@@ -11,6 +11,7 @@ import BookResearch from '../views/BookResearch.vue'
 import BookDetail from '../views/BookDetail.vue'
 import AddBookTag from '../views/AddBookTag.vue'
 import UserInfo from '../views/UserInfo.vue'
+import ChangeUserInfo from '../views/ChangeUserInfo.vue'
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
     path: '/userinfo',
     name: 'userinfo',
     component: UserInfo,
+  },
+  {
+    path: '/changeuserinfo',
+    name: 'changeuserinfo',
+    component: ChangeUserInfo,
   },
 ]
 
