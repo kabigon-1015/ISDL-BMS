@@ -311,4 +311,42 @@ func Router(router *gin.Engine) {
 			"rented_publisher": rented_publisherlist,
 		})
 	})
+
+	router.POST("/changeuserinfo", func(c *gin.Context) {
+		old_id := c.PostForm("old_id")
+		old_name := c.PostForm("old_name")
+		old_email := c.PostForm("old_email")
+		old_password := c.PostForm("old_password")
+		new_password := c.PostForm("new_password")
+		new_email := c.PostForm("new_email")
+		new_name := c.PostForm("new_username")
+
+		if old_id == "null" {
+			c.JSON(200, gin.H{
+				"message": "ログインしてください",
+				"name":    old_name,
+				"email":   old_email,
+				"success": 0,
+			})
+		} else {
+			veryfy_name, veryfy_email := repository.VeryfyUser(old_id, old_password)
+			fmt.Print('1', veryfy_name, veryfy_email)
+			if len(veryfy_name) == 0 {
+				c.JSON(200, gin.H{
+					"message": "パスワードが間違っています",
+					"name":    old_name,
+					"email":   old_email,
+					"success": 0,
+				})
+			} else {
+				repository.ChangeUserInfo(old_id, old_password, new_password, new_email, new_name)
+				c.JSON(200, gin.H{
+					"message": "ユーザー情報を更新しました",
+					"name":    new_name,
+					"email":   new_email,
+					"success": 1,
+				})
+			}
+		}
+	})
 }
