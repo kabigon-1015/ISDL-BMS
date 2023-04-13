@@ -14,6 +14,7 @@ import UserInfo from '../views/UserInfo.vue'
 import AdminPage from '../views/AdminPage.vue'
 import AddBook from '../views/AddBook.vue'
 import DeleteBook from '../views/DeleteBook.vue'
+import ChangeUserInfo from '../views/ChangeUserInfo.vue'
 
 const routes = [
   {
@@ -90,6 +91,11 @@ const routes = [
     path: '/deletebook',
     name: 'deletebook',
     component: DeleteBook,
+  },
+  {
+    path: '/changeuserinfo',
+    name: 'changeuserinfo',
+    component: ChangeUserInfo,
   },
 ]
 

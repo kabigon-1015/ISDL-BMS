@@ -51,6 +51,8 @@
             </table>
           <!-- </div> -->
           </div>
+          <br>
+          <button v-on:click="changeinfo" class="btn btn--yellow btn--cubic">ユーザー情報変更</button>
         </section>
       </section>
     </div>
@@ -62,7 +64,7 @@
 import axios from 'axios'
 const URL = '/'
 export default {
-	name: 'BookList',
+	name: 'UserInfo',
 		data() {
 			return {
 			checked:false,
@@ -123,7 +125,12 @@ export default {
 			alert('データを送信できませんでした．')
 			// alert(error)
 		})
-	}
+	},
+  methods:{
+    changeinfo: function(){
+      this.$router.push({ path: '/changeuserinfo' });
+    }
+  }
 }
 </script>
 
@@ -286,6 +293,8 @@ button.btn {
   letter-spacing: 0.1em;
   color: #212529;
   border-radius: 0.5rem;
+  top: 55%;
+  left: 20%
 }
 button.btn--yellow {
   color: white;

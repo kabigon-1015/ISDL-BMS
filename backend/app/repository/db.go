@@ -359,7 +359,7 @@ func Returnbook(id string, isbn string) {
 	for rows_bookid.Next() {
 		rows_bookid.Scan(&book_id)
 	}
-	fmt.Print(book_id)
+	// fmt.Print(book_id)
 
 	rows_histid, err := db.Query("SELECT id FROM Rent_hist WHERE bookid = ? AND returned=?", book_id, "1")
 
@@ -370,7 +370,7 @@ func Returnbook(id string, isbn string) {
 	for rows_histid.Next() {
 		rows_histid.Scan(&search_result)
 	}
-	fmt.Print(search_result)
+	// fmt.Print(search_result)
 
 	if rows_histid != nil {
 		_ = db.QueryRow("UPDATE Rent_hist SET returned = ? WHERE id = ? AND renterid = ?", "0", search_result, id)
@@ -467,7 +467,7 @@ func GetTagedBookInfo(id string) (string, string, string, string, string) {
 	return book.Book_title, book.Book_author, book.Book_publisher, book.Book_overview, book.Book_imageurl
 }
 
-func AddBook(title interface{},isbn interface{},author interface{},author_kana interface{},publisher interface{},overview interface{},image_url interface{}){
+func AddBook(title interface{}, isbn interface{}, author interface{}, author_kana interface{}, publisher interface{}, overview interface{}, image_url interface{}) {
 
 	Opendb()
 	defer db.Close()
@@ -478,10 +478,10 @@ func AddBook(title interface{},isbn interface{},author interface{},author_kana i
 		log.Fatal(err.Error())
 	}
 
-	insert.Exec(title,isbn,author,author_kana,publisher,overview,image_url)
+	insert.Exec(title, isbn, author, author_kana, publisher, overview, image_url)
 }
 
-func DeleteBook(isbn string){
+func DeleteBook(isbn string) {
 	fmt.Print(isbn)
 	Opendb()
 	defer db.Close()
@@ -493,4 +493,11 @@ func DeleteBook(isbn string){
 	}
 
 	delete.Exec(isbn)
+}
+func ChangeUserInfo(old_id string, old_password string, new_password string, new_email string, new_name string) {
+
+	Opendb()
+	defer db.Close()
+
+	_ = db.QueryRow("UPDATE Students SET password=?, email=?, name=? WHERE id = ? AND password = ?", new_password, new_email, new_name, old_id, old_password)
 }

@@ -26,7 +26,7 @@ export default {
 <style scoped>
 .user {
   position: relative;
-  height: 30px;
+  height: 10px;
   width: 150px;
   margin: 0 0 0 auto;
   padding: 10px;
