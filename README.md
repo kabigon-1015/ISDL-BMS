@@ -6,7 +6,7 @@
 - hoka-isdl
 - ssizawa
 - kabigon-1015
-- 
+
 # 使用技術
 Docker環境上で以下3つに対応したコンテナを用意し、docker-composeでスタック
 - フロントエンド：Vue.js
