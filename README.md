@@ -18,4 +18,4 @@ Docker環境上で以下3つに対応したコンテナを用意し、docker-com
 ![readme_rental](https://user-images.githubusercontent.com/107198960/233127255-593d15ee-cf59-435e-99ef-b1ffd08adb49.png)
 
 - 書籍情報画面
-![readme_rental](https://user-images.githubusercontent.com/107198960/233127319-1f77f36f-8efb-45dc-bb8b-831b3cf30302.png)
+![readme_bookinfo](https://user-images.githubusercontent.com/107198960/233128158-abe007e8-e452-4618-b695-260a10088ed5.png)
