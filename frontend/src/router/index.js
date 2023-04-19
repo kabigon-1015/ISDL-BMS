@@ -11,6 +11,9 @@ import BookResearch from '../views/BookResearch.vue'
 import BookDetail from '../views/BookDetail.vue'
 import AddBookTag from '../views/AddBookTag.vue'
 import UserInfo from '../views/UserInfo.vue'
+import AdminPage from '../views/AdminPage.vue'
+import AddBook from '../views/AddBook.vue'
+import DeleteBook from '../views/DeleteBook.vue'
 import ChangeUserInfo from '../views/ChangeUserInfo.vue'
 
 const routes = [
@@ -73,6 +76,21 @@ const routes = [
     path: '/userinfo',
     name: 'userinfo',
     component: UserInfo,
+  },
+  {
+    path: '/adminpage',
+    name: 'adminpage',
+    component: AdminPage,
+  },
+  {
+    path: '/addbook',
+    name: 'addbook',
+    component: AddBook,
+  },
+  {
+    path: '/deletebook',
+    name: 'deletebook',
+    component: DeleteBook,
   },
   {
     path: '/changeuserinfo',

@@ -13,10 +13,6 @@
             >
           </dd>
         </dl>
-        <router-link to="/addbooktag">
-            <figure><img src="../assets/images/sample1.jpg" alt="" /></figure>
-              <h4>タグ追加</h4>
-            </router-link>
       </section>
       <!--/#new-->
     </div>

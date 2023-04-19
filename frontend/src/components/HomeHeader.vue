@@ -8,18 +8,12 @@
 	<nav id="menubar">
 	<ul>
 	<li class="menuimg menu1 current"><router-link to="/"><span>Home</span></router-link></li>
-	<li class="menuimg menu2"><router-link :to="{name:'rental',params:{show:1}}"><span>Rental</span></router-link></li>
+	<li class="menuimg menu2"><router-link to="/rental"><span>Rental</span></router-link></li>
 	<li class="menuimg menu3"><router-link to="/return"><span>Return</span></router-link></li>
-	<li class="menuimg menu4"><router-link to="/userinfo"><span>User Info</span></router-link></li>
-	<li class="menuimg menu5"><router-link to="/booklist"><span>Book List</span></router-link></li>
+	<!-- <li class="menuimg menu4"><router-link to="/userinfo"><span>User Info</span></router-link></li> -->
+	<li class="menuimg menu5"><router-link to="/adminpage"><span>Admin Page</span></router-link></li>
 	</ul>
 	</nav>
-	<!-- <ul class="icon">
-	<li><a href="#"><img src="../assets/images/icon_facebook.png" alt="Facebook"></a></li>
-	<li><a href="#"><img src="../assets/images/icon_twitter.png" alt="Twitter"></a></li>
-	<li><a href="#"><img src="../assets/images/icon_instagram.png" alt="Instagram"></a></li>
-	<li><a href="#"><img src="../assets/images/icon_youtube.png" alt="YouTube"></a></li>
-	</ul> -->
 
 </header>
 <!--/.pc-->
@@ -50,7 +44,7 @@
 </div>
 </template>
 <script>
-import axios from "axios";
+// import axios from "axios";
 
 export default {
   data: () => ({
@@ -58,7 +52,6 @@ export default {
   }),
   methods: {
     changeTitle(title){
-      // alert(title);
       this.title = title;
     }
   }
