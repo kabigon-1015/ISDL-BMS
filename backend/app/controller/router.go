@@ -190,9 +190,23 @@ func Router(router *gin.Engine) {
 	})
 
 	router.POST("/gettag", func(c *gin.Context) {
-		alltagname := repository.GetAllTag()
+		alltag := repository.GetAllTag()
+		category_number := 0
+		var categorize_tagdata [][][]string
+		var category_tag [][]string		
+		// カテゴリごとに分ける処理
+		for _, v := range alltag{
+			index := strings.Index(v[0], strconv.Itoa(category_number))
+			if index != 0{
+				category_number = category_number + 1
+				categorize_tagdata = append(categorize_tagdata, category_tag)
+				category_tag = nil
+				continue
+			}
+			category_tag = append(category_tag, v)
+		}
 		c.JSON(200, gin.H{
-			"alltagname": alltagname,
+			"alltagname": categorize_tagdata,
 		})
 	})
 

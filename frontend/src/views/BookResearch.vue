@@ -17,26 +17,28 @@
             </button>
             <h2>書籍に関連するタグを選んで下さい</h2>
             <div class="tagbtn">
-            <button v-for="(tag,index) in tags" :key="index" v-on:click="catchtag(tag)" class="btn btn--yellow btn--cubic">
-              {{tag}}
-            </button>
+              <div v-for="item in tags" :key="item.name">
+                <input type="checkbox" v-model="item.checked" @click="clicked(item)">
+                {{item.name}}
+              </div>
             </div>
           </div>
-          <table class="returntable">
+      <table class="returntable">
 				<thead>
 					<tr>
-						<th>タイトル</th>
-						<th>著者</th>
-						<th>出版社</th>
-						<th>貸出状況</th>
+						<th class=title>タイトル</th>
+						<th class=author>著者</th>
+						<th class=publisher>出版社</th>
+						<th class=status>貸出状況</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="Data in tableData" :key="Data.name">
-						<td v-text="Data.title"></td>
-            <td v-text="Data.author"></td>
-						<td v-text="Data.publisher"></td>
-						<td v-text="Data.state"></td>
+						<td class=title><router-link :to="{name:'detail',query:{title:Data.title}}" v-text="Data.title"></router-link></td>
+						<td class=author v-text="Data.author"></td>
+						<td class=publisher v-text="Data.publisher"></td>
+						<td class=status v-if="Data.state=='貸出可能'"><button variant="secondary" class="btn btn--yellow btn--cubic" v-on:click="sendrental(Data.isbn)">借りる</button></td>
+						<td class=status v-else v-text="Data.state"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -104,17 +106,23 @@ export default {
       tag:[],
       getData:[],
 			tableData: [],
+      tmp_data:[],
     };
   },
   created: function () {
     var params = new FormData();
     params.append("isbn", "this.isbn");
     this.tags = []
+    console.log("response.data")
     const response = axios
         .post("/gettag", params)
         .then((response) => {
             for(var i in response.data.alltagname){
-                this.tags.push(response.data.alltagname[i]);
+                this.tmp_data = {
+                  name:response.data.alltagname[i],
+                  checked:false
+                }
+                this.tags.push(this.tmp_data);
             }
             console.log(response.data);
         })
@@ -134,6 +142,98 @@ export default {
         .post("/research", params)
         .then((response) => {
           console.log(response.data);
+        })
+        .catch((error) => {
+          alert("データを送信できませんでした．");
+        });
+    },
+    sendrental(isbn){
+			var params = new FormData()
+			params.append('user_id', this.$store.state.userid)
+			params.append('isbn', isbn)
+			this.sendisbn = []
+			console.log(params['isbn'])
+			axios.post(`${URL}rental_register`, params)
+			.then(response => {
+				alert(response.data['message'])
+				axios.post(`${URL}book_list`)
+				.then(response => {
+					// alert(response.status)
+					// console.log(response.data)
+					this.tableData=[]
+					for(var i in response.data.title){
+						console.log(i)
+						this.getData = {
+							title:response.data.title[i],
+							isbn:response.data.isbn[i],
+							author:response.data.author[i],
+							publisher:response.data.publisher[i],
+							state: String(response.data.rentaluser_name[i])
+						}
+						console.log(response.data)
+						// if(this.getData.state == "null") {
+						// 	this.getData.state = '貸出可能'
+						// }
+						this.tableData.push(this.getData)
+					}	
+				})
+				.catch(error => {
+					alert('データを送信できませんでした．')
+					console.log(error)
+					// alert(error)
+				})
+				console.log(response.data)
+			})
+			.catch(error => {
+				alert('データを送信できませんでした．')
+				alert(error)
+			})
+			this.returnbooks.splice(0)
+		},
+    clicked(item){
+      this.tag = []
+      this.tableData = []
+      for (var t in this.tags){
+        if (this.tags[t].name == item.name){
+          if (this.tags[t].checked == true){
+            this.tags[t].checked = false
+            break
+          }
+          else{
+            this.tags[t].checked = true
+            break
+          }
+        }
+      }
+      for (var u in this.tags){
+        if (this.tags[u].checked == true){
+          this.tag.push(this.tags[u].name)
+        }
+      }
+      console.log(this.tag)
+      var params = new FormData();
+      params.append('taglength', this.tag.length)
+      this.tag.forEach((text, index) => {
+        params.append('tag[' + index + ']', text);
+      })
+      const response = axios
+        .post("/filterbook", params)
+        .then((response) => {
+          for(var i in response.data.title){
+                console.log(i)
+                this.getData = {
+                    title:response.data.title[i],
+                    author:response.data.author[i],
+                    publisher:response.data.publisher[i],
+                    state: String(response.data.rentaluser_name[i])
+                }
+                console.log(response.data)
+                if(this.getData.state == "null") {
+                    this.getData.state = '貸出可能'
+                }
+                this.tableData.push(this.getData)
+                console.log(response.data)
+            }
         })
         .catch((error) => {
           alert("データを送信できませんでした．");
@@ -222,7 +322,7 @@ export default {
 }
 table {
   position: absolute;
-  table-layout: fixed;
+  /* table-layout: fixed; */
   /* top: 130px; */
   size: 200px;
   border-collapse: collapse;
@@ -239,12 +339,12 @@ table tr {
 /* thead */
 thead th {
 	font-size: 12px;
-	/* width: 100px; */
+	/* width: 300px; */
 	text-align: center;
-	padding: 8px 0;
+	padding: 8px;
 	/* color */
 	color: white;
-	background-color:#1b2538;
+	background-color:#b3ae92;
 	border-top: 1px solid #a2a7af;
 	border-left: 1px solid #a2a7af;
 	border-right: 1px solid #a2a7af;
@@ -268,7 +368,15 @@ tbody td {
 	border-left:1px solid #a2a7af;
 	border-right:1px solid #a2a7af;
 }
-
+a {
+	color: #111;		/*リンクテキストの色*/
+	transition: 0.4s;	/*マウスオン時の移り変わるまでの時間設定。0.4秒。*/
+	text-decoration: none;
+}
+a:hover {
+	color: #448db3;			/*マウスオン時の文字色*/
+	text-decoration: none;	/*マウスオン時に下線を消す設定。残したいならこの１行削除。*/
+}
 .txt{
    text-align: left;
    font-size: 1.3em;
@@ -425,15 +533,15 @@ button.btn {
 }
 
 button.btn--yellow {
-  color: #000;
-  background-color: #00d0ff;
-  border-bottom: 5px solid #0096cc;
+  color: white;
+  background-color: #b3ae92;
+  border-bottom: 5px solid #7f7b68;
 }
 
 button.btn--yellow:hover {
   margin-top: 3px;
-  color: #000;
-  background: #00d0ff;
-  border-bottom: 2px solid #0096cc;
+  color: white;
+  background: #b3ae92;
+  border-bottom: 2px solid #7f7b68;
 }
 </style>

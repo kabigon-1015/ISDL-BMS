@@ -124,25 +124,26 @@ func GetTagid(tagname string) string {
 	return tag.Id
 }
 
-func GetAllTag() []string {
+func GetAllTag() [][]string {
 	var tag structure.Tags
-	var alltagname []string
+	var alltag [][]string
 
 	Opendb()
 	defer db.Close()
 
-	rows_title, err := db.Query("SELECT tagname FROM Tags")
+	rows_title, err := db.Query("SELECT id, tagname FROM Tags")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	for rows_title.Next() {
-		rows_title.Scan(&tag.TagName)
-		alltagname = append(alltagname, tag.TagName)
+		rows_title.Scan(&tag.Id, &tag.TagName)
+		tagdata := []string{tag.Id, tag.TagName}
+		alltag = append(alltag, tagdata)
 	}
 
-	return alltagname
+	return alltag
 }
 
 func SignUp(userid string, password string, username string, emailadress string) {
